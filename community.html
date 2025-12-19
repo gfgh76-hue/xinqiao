@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>共情社区 · 平台完整版（纯前端可运行）</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --panel:#ffffff;
+      --ink:#1f2937;
+      --muted:rgba(31,41,55,.7);
+
+      --cream:#FFF1DC;
+      --cream-b:#F7D9B3;
+
+      --card:#ffffff;
+      --card-b:rgba(0,0,0,.06);
+
+      --orange:#F97316;
+      --orange2:#EA6A0E;
+
+      --shadow-big:0 18px 46px rgba(0,0,0,0.14);
+      --shadow-card:0 14px 36px rgba(0,0,0,0.12);
+      --shadow-btn:0 12px 26px rgba(249,115,22,.35);
+
+      --r-xl:28px;
+      --r-lg:20px;
+      --r-md:14px;
+      --ease:cubic-bezier(.4,0,.2,1);
+      --font: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+              "PingFang SC","Hiragino Sans GB","Microsoft YaHei", Arial, sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink)}
+    a{color:inherit}
+
+    .wrap{padding:52px 16px 64px}
+    .container{max-width:1200px;margin:0 auto}
+
+    .section-shell{
+      background:var(--cream);
+      border:1px solid var(--cream-b);
+      border-radius:var(--r-xl);
+      box-shadow:var(--shadow-big);
+      padding:34px;
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1fr 1.35fr;
+      gap:44px;
+      align-items:center;
+    }
+
+    .media-card{
+      background:var(--card);
+      border:1px solid var(--card-b);
+      border-radius:var(--r-lg);
+      box-shadow:var(--shadow-card);
+      padding:22px;
+    }
+    .icon-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    .icon-badge{
+      width:56px;height:56px;border-radius:18px;
+      background:rgba(249,115,22,.12);
+      border:1px solid rgba(249,115,22,.18);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    }
+    .img-wrap{
+      border-radius:var(--r-md);
+      overflow:hidden;background:#f3f4f6;
+      border:1px solid rgba(0,0,0,.06);
+    }
+    .img-wrap img{width:100%;height:330px;object-fit:cover;display:block}
+
+    .title{
+      margin:0 0 10px 0;
+      font-size:clamp(32px,3.2vw,44px);
+      font-weight:900;
+      letter-spacing:.02em;
+      color:#F59B23;
+    }
+    .desc{
+      margin:0;
+      font-size:18px;
+      line-height:2.0;
+      color:rgba(31,41,55,.88);
+    }
+    .cta-row{margin-top:22px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+    .btn{
+      appearance:none;border:none;cursor:pointer;
+      display:inline-flex;align-items:center;gap:10px;
+      padding:16px 30px;border-radius:999px;
+      background:var(--orange);color:#fff;
+      font-size:18px;font-weight:900;
+      box-shadow:var(--shadow-btn);
+      transition:transform .15s var(--ease), background .2s var(--ease);
+    }
+    .btn:hover{background:var(--orange2);transform:translateY(-1px)}
+    .btn:active{transform:translateY(0) scale(.99)}
+    .btn .pill{
+      width:40px;height:40px;border-radius:999px;
+      background:rgba(255,255,255,.18);
+      display:flex;align-items:center;justify-content:center;font-size:20px;
+    }
+    .hint{font-size:13px;color:var(--muted);line-height:1.7}
+
+    .app{
+      margin-top:22px;
+      background:#fff;
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:22px;
+      box-shadow:0 12px 30px rgba(0,0,0,.06);
+      overflow:hidden;
+    }
+    .app-grid{display:grid;grid-template-columns:280px 1fr;min-height:560px}
+    .side{
+      background:linear-gradient(180deg, rgba(249,115,22,.10), rgba(255,241,220,.25));
+      border-right:1px solid rgba(0,0,0,.06);
+      padding:18px 14px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 10px 14px;
+    }
+    .brand-badge{
+      width:44px;height:44px;border-radius:14px;
+      background:rgba(249,115,22,.14);
+      display:flex;align-items:center;justify-content:center;
+      border:1px solid rgba(249,115,22,.2);
+      font-size:20px;
+    }
+    .brand h3{margin:0;font-size:15px;font-weight:900}
+    .brand p{margin:2px 0 0;font-size:12px;color:rgba(31,41,55,.65);line-height:1.35}
+
+    .nav{display:flex;flex-direction:column;gap:8px;padding:0 8px 10px}
+    .nav button{
+      width:100%;
+      text-align:left;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.06);
+      background:rgba(255,255,255,.65);
+      cursor:pointer;
+      font-weight:800;
+      color:rgba(31,41,55,.86);
+      transition:transform .12s var(--ease), background .2s var(--ease), border-color .2s var(--ease);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .nav button:hover{transform:translateY(-1px);background:#fff}
+    .nav button.active{
+      background:rgba(249,115,22,.14);
+      border-color:rgba(249,115,22,.28);
+      color:rgba(31,41,55,.95);
+    }
+    .count{
+      font-size:12px;font-weight:900;
+      padding:2px 10px;border-radius:999px;
+      background:rgba(31,41,55,.08);
+      color:rgba(31,41,55,.82);
+    }
+    .nav button.active .count{background:rgba(249,115,22,.18)}
+
+    .side-actions{padding:10px 8px 8px;display:flex;flex-direction:column;gap:8px}
+    .ghost{
+      border:1px solid rgba(0,0,0,.10);
+      background:rgba(255,255,255,.72);
+      border-radius:999px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:900;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      transition:transform .12s var(--ease), background .2s var(--ease);
+    }
+    .ghost:hover{transform:translateY(-1px);background:#fff}
+    .side-note{padding:8px 12px 0;color:rgba(31,41,55,.65);font-size:12px;line-height:1.65}
+
+    .main{padding:18px 18px 20px;background:#fff}
+    .toolbar{
+      display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    .search{
+      flex:1;min-width:240px;
+      display:flex;gap:10px;align-items:center;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius:999px;
+      padding:10px 12px;
+      background:#fff;
+    }
+    .search input{
+      border:none;outline:none;flex:1;font-size:14px;background:transparent
+    }
+    .chip-row{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{
+      border:1px solid rgba(0,0,0,.10);
+      background:rgba(0,0,0,.02);
+      padding:7px 10px;border-radius:999px;
+      cursor:pointer;font-weight:800;font-size:12px;color:rgba(31,41,55,.78);
+      transition:transform .12s var(--ease), background .2s var(--ease), border-color .2s var(--ease);
+      user-select:none;
+    }
+    .chip:hover{transform:translateY(-1px);background:rgba(249,115,22,.08)}
+    .chip.active{background:rgba(249,115,22,.14);border-color:rgba(249,115,22,.25);color:rgba(31,41,55,.92)}
+
+    .content-grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+    }
+    .panel{
+      border:1px solid rgba(0,0,0,.08);
+      border-radius:18px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .panel-head{
+      padding:12px 14px;
+      border-bottom:1px solid rgba(0,0,0,.06);
+      background:linear-gradient(90deg, rgba(249,115,22,.08), rgba(255,241,220,.35));
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .panel-head h4{margin:0;font-size:14px;font-weight:900}
+    .panel-body{padding:12px 12px 14px}
+
+    .list{display:flex;flex-direction:column;gap:10px}
+    .item{
+      border:1px solid rgba(0,0,0,.08);
+      border-radius:14px;
+      padding:12px 12px;
+      cursor:pointer;
+      background:#fff;
+      transition:transform .12s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+    }
+    .item:hover{transform:translateY(-1px);border-color:rgba(249,115,22,.18);background:rgba(249,115,22,.04)}
+    .item.active{border-color:rgba(249,115,22,.30);background:rgba(249,115,22,.06)}
+    .item-top{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+    .item-title{font-weight:900;font-size:14px;margin:0;color:rgba(31,41,55,.94)}
+    .item-meta{font-size:12px;color:rgba(31,41,55,.60);margin-top:4px;line-height:1.4}
+    .badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    .badge{
+      font-size:12px;font-weight:900;
+      padding:2px 10px;border-radius:999px;
+      background:rgba(249,115,22,.12);
+      border:1px solid rgba(249,115,22,.18);
+      color:rgba(31,41,55,.88);
+    }
+
+    .detail h2{margin:0;font-size:18px;font-weight:1000}
+    .detail .meta{margin-top:6px;font-size:12px;color:rgba(31,41,55,.62)}
+    .detail .text{margin-top:12px;font-size:14px;line-height:1.9;color:rgba(31,41,55,.88);white-space:pre-wrap}
+    .detail .actions{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .mini{
+      border:1px solid rgba(0,0,0,.10);
+      background:#fff;
+      border-radius:999px;
+      padding:8px 12px;
+      cursor:pointer;
+      font-weight:900;
+      font-size:13px;
+      transition:transform .12s var(--ease), background .2s var(--ease);
+    }
+    .mini:hover{transform:translateY(-1px);background:rgba(0,0,0,.02)}
+    .mini.primary{
+      border:none;background:rgba(249,115,22,.92);color:#fff;
+      box-shadow:0 10px 22px rgba(249,115,22,.20);
+    }
+    .mini.primary:hover{background:rgba(234,106,14,.98)}
+    .divider{height:1px;background:rgba(0,0,0,.06);margin:12px 0}
+
+    .comment-box{
+      border:1px solid rgba(0,0,0,.10);
+      border-radius:14px;
+      padding:10px 10px;
+      display:flex;gap:10px;align-items:flex-start;
+      background:#fff;
+      margin-top:10px;
+    }
+    .comment-box textarea{
+      flex:1;border:none;outline:none;resize:none;
+      font-family:var(--font);font-size:13px;line-height:1.6;
+      min-height:56px;background:transparent;
+    }
+    .comment-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+    .comment{
+      border:1px solid rgba(0,0,0,.08);
+      border-radius:14px;
+      padding:10px 10px;
+      background:rgba(0,0,0,.015);
+    }
+    .comment .cmeta{font-size:12px;color:rgba(31,41,55,.62)}
+    .comment .ctext{margin-top:6px;font-size:13px;line-height:1.75;color:rgba(31,41,55,.86);white-space:pre-wrap}
+    .empty{
+      padding:18px;
+      border:1px dashed rgba(0,0,0,.16);
+      border-radius:14px;
+      color:rgba(31,41,55,.65);
+      font-size:13px;
+      line-height:1.7;
+      background:rgba(0,0,0,.02);
+    }
+
+    .backdrop{
+      position:fixed;inset:0;
+      background:rgba(0,0,0,.36);
+      display:none;align-items:center;justify-content:center;
+      padding:16px;z-index:999;
+    }
+    .backdrop.show{display:flex}
+    .modal{
+      width:min(820px,96vw);
+      background:#fff;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 30px 70px rgba(0,0,0,.22);
+      border:1px solid rgba(0,0,0,.08);
+    }
+    .mhead{
+      padding:16px 18px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      background:linear-gradient(90deg, rgba(249,115,22,.12), rgba(255,241,220,.55));
+      border-bottom:1px solid rgba(0,0,0,.06);
+    }
+    .mhead h3{margin:0;font-size:16px;font-weight:1000}
+    .x{
+      width:40px;height:40px;border-radius:999px;
+      border:1px solid rgba(0,0,0,.10);
+      background:rgba(255,255,255,.92);
+      cursor:pointer;font-size:20px;
+      display:flex;align-items:center;justify-content:center;
+      transition:transform .12s var(--ease);
+    }
+    .x:hover{transform:scale(1.03)}
+    .mbody{padding:16px 18px 18px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .field{display:flex;flex-direction:column;gap:6px}
+    .field.full{grid-column:1/-1}
+    label{font-size:12px;color:rgba(31,41,55,.70);font-weight:900}
+    input,select,textarea{
+      border:1px solid rgba(0,0,0,.12);
+      border-radius:12px;
+      padding:12px 12px;
+      font-size:14px;
+      font-family:var(--font);
+      outline:none;
+      transition:border-color .12s var(--ease), box-shadow .12s var(--ease);
+    }
+    textarea{min-height:110px;resize:vertical}
+    input:focus,select:focus,textarea:focus{
+      border-color:rgba(249,115,22,.55);
+      box-shadow:0 0 0 3px rgba(249,115,22,.15);
+    }
+    .mactions{
+      margin-top:12px;
+      display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;
+    }
+    .note{
+      font-size:12px;color:rgba(31,41,55,.62);line-height:1.6;
+    }
+    .toast{
+      position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+      background:rgba(17,24,39,.92);color:#fff;
+      padding:12px 14px;border-radius:999px;
+      font-size:13px;display:none;z-index:1000;
+    }
+    .toast.show{display:block}
+
+    @media (max-width: 980px){
+      .hero-grid{grid-template-columns:1fr;gap:24px}
+      .section-shell{padding:22px}
+      .img-wrap img{height:260px}
+      .app-grid{grid-template-columns:1fr}
+      .side{border-right:none;border-bottom:1px solid rgba(0,0,0,.06)}
+      .content-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="container">
+
+      <div class="section-shell">
+        <div class="hero-grid">
+          <div class="media-card">
+            <div class="icon-row">
+              <div class="icon-badge" aria-hidden="true">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                  <path d="M16 11c1.66 0 3-1.57 3-3.5S17.66 4 16 4s-3 1.57-3 3.5S14.34 11 16 11Z" fill="#F97316"/>
+                  <path d="M8 12c1.93 0 3.5-1.79 3.5-4S9.93 4 8 4 4.5 5.79 4.5 8 6.07 12 8 12Z" fill="#F97316"/>
+                  <path d="M16 13c-1.2 0-3.5.6-3.5 1.8V18h7v-3.2c0-1.2-2.3-1.8-3.5-1.8Z" fill="#FDBA74"/>
+                  <path d="M8 14c-1.5 0-4.5.75-4.5 2.25V18h9v-1.75C12.5 14.75 9.5 14 8 14Z" fill="#FDBA74"/>
+                </svg>
+              </div>
+            </div>
+            <div class="img-wrap">
+              <img id="heroImg" src="img/community.jpg" alt="共情社区插图（可替换）">
+            </div>
+          </div>
+
+          <div>
+            <h1 class="title">共情社区</h1>
+            <p class="desc">
+              聚焦代际情感联结的双向支持空间，专为打破亲子沟通壁垒、缓解双方孤独感打造。
+              平台核心设立两大特色板块：“家长树洞”匿名倾诉区，让父母可毫无顾虑地分享育儿困惑、焦虑情绪与沟通难题；
+              “青年心声”书信体专栏，鼓励青少年以真诚文字袒露成长烦恼、自我主张与情感需求。
+              通过真实案例展示、同辈经验交流与跨代互动留言，推动亲子双方从“互不理解”走向“主动倾听”，从“沉默对抗”变为“真诚对话”。
+            </p>
+
+            <div class="cta-row">
+              <button class="btn" id="btnJoin">
+                加入合作 <span class="pill" aria-hidden="true">🤝</span>
+              </button>
+              <div class="hint">
+                本页面为<strong>纯前端可运行</strong>版本：数据默认存于本地浏览器（localStorage），方便你先把平台跑起来；后续接后端也很容易对接。
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="app" id="app">
+          <div class="app-grid">
+            <aside class="side">
+              <div class="brand">
+                <div class="brand-badge" aria-hidden="true">🧡</div>
+                <div>
+                  <h3>共情社区 · 平台</h3>
+                  <p>树洞 · 书信 · 案例 · 留言<br>（本地演示版，可导入/导出）</p>
+                </div>
+              </div>
+
+              <div class="nav" id="nav">
+                <button data-tab="treehole" class="active"><span>🌳 家长树洞</span><span class="count" id="c_treehole">0</span></button>
+                <button data-tab="youth"><span>✉️ 青年心声</span><span class="count" id="c_youth">0</span></button>
+                <button data-tab="cases"><span>📚 真实案例</span><span class="count" id="c_cases">0</span></button>
+                <button data-tab="board"><span>💬 跨代留言</span><span class="count" id="c_board">0</span></button>
+              </div>
+
+              <div class="side-actions">
+                <button class="ghost" id="btnNew">➕ 发布内容</button>
+                <button class="ghost" id="btnExport">⬇️ 导出数据</button>
+                <button class="ghost" id="btnImport">⬆️ 导入数据</button>
+                <input id="importFile" type="file" accept="application/json" style="display:none">
+              </div>
+
+              <div class="side-note">
+                <strong>提示：</strong>不建议填写手机号/地址等隐私。若需要专业支持，请线下联系学校/机构或专业人员。
+              </div>
+            </aside>
+
+            <main class="main">
+              <div class="toolbar">
+                <div class="search" title="搜索：标题/正文/标签">
+                  🔎 <input id="q" placeholder="搜索关键词（标题/内容/标签）" />
+                  <button class="mini" id="btnClearQ" type="button">清空</button>
+                </div>
+                <div class="chip-row" id="chips"></div>
+              </div>
+
+              <div class="content-grid">
+                <section class="panel">
+                  <div class="panel-head">
+                    <h4 id="listTitle">内容列表</h4>
+                    <div style="display:flex;gap:8px;align-items:center">
+                      <button class="mini" id="btnSort" type="button" title="切换排序：最新/最热">🔥 最热</button>
+                      <button class="mini primary" id="btnNew2" type="button">发布</button>
+                    </div>
+                  </div>
+                  <div class="panel-body">
+                    <div class="list" id="list"></div>
+                    <div id="listEmpty" class="empty" style="display:none">
+                      这里还没有内容。你可以点击<strong>“发布”</strong>创建第一条。<br><br>
+                      ✅ 家长树洞：匿名倾诉与求助<br>
+                      ✅ 青年心声：书信式表达与倾听<br>
+                      ✅ 真实案例：可复盘的情境与解决过程<br>
+                      ✅ 跨代留言：短留言互动（建议更温和）
+                    </div>
+                  </div>
+                </section>
+
+                <section class="panel">
+                  <div class="panel-head">
+                    <h4>内容详情</h4>
+                    <div style="display:flex;gap:8px;align-items:center">
+                      <button class="mini" id="btnShare" type="button">🔗 复制链接</button>
+                      <button class="mini" id="btnReport" type="button">🚩 举报</button>
+                    </div>
+                  </div>
+                  <div class="panel-body">
+                    <div id="detail" class="detail">
+                      <div class="empty">
+                        请选择左侧一条内容查看详情。<br><br>
+                        小贴士：你可以用<strong>标签</strong>快速筛选，也可以搜索关键词。
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+            </main>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="backdrop" id="composerBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="发布内容">
+      <div class="mhead">
+        <h3>➕ 发布内容</h3>
+        <button class="x" id="closeComposer" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="mbody">
+        <form id="composerForm">
+          <div class="grid2">
+            <div class="field">
+              <label for="type">发布到</label>
+              <select id="type" name="type" required>
+                <option value="treehole">🌳 家长树洞</option>
+                <option value="youth">✉️ 青年心声</option>
+                <option value="cases">📚 真实案例</option>
+                <option value="board">💬 跨代留言</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="tags">标签（逗号分隔）</label>
+              <input id="tags" name="tags" placeholder="例如：手机使用, 学习压力, 亲子冲突" />
+            </div>
+
+            <div class="field full">
+              <label for="title">标题（建议简短）</label>
+              <input id="title" name="title" placeholder="例如：孩子每天熬夜刷手机，我该怎么沟通？" required />
+            </div>
+
+            <div class="field full">
+              <label for="content">内容</label>
+              <textarea id="content" name="content" placeholder="请描述：发生了什么？你当时感受/担心是什么？你希望达成怎样的结果？（不要写手机号/地址等隐私）" required></textarea>
+            </div>
+
+            <div class="field">
+              <label for="anon">匿名发布</label>
+              <select id="anon" name="anon">
+                <option value="yes" selected>是（默认）</option>
+                <option value="no">否（显示一个昵称）</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="nickname">昵称（非匿名时使用）</label>
+              <input id="nickname" name="nickname" placeholder="例如：一位妈妈 / 小A" />
+            </div>
+          </div>
+
+          <div class="mactions">
+            <div class="note">
+              ✅ 建议用“我感到…因为我在乎/需要…”来表达，更容易获得理解。<br>
+              ⚠️ 这是演示版：数据仅保存在你当前浏览器里，可导出备份。
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <button class="mini" id="cancelComposer" type="button">取消</button>
+              <button class="mini primary" type="submit">发布</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="backdrop" id="coopBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="加入合作">
+      <div class="mhead">
+        <h3>🤝 加入合作（共建共情社区）</h3>
+        <button class="x" id="closeCoop" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="mbody">
+        <form id="coopForm">
+          <div class="grid2">
+            <div class="field">
+              <label for="org">机构/团队名称</label>
+              <input id="org" name="org" placeholder="例如：XX学校 / XX心理机构 / 家委会" required />
+            </div>
+            <div class="field">
+              <label for="orgType">合作方类型</label>
+              <select id="orgType" name="orgType" required>
+                <option value="" selected disabled>请选择</option>
+                <option>学校 / 家委会</option>
+                <option>心理 / 教育机构</option>
+                <option>公益组织</option>
+                <option>内容团队 / 媒体</option>
+                <option>个人志愿者</option>
+                <option>其他</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="contact">联系方式（填一种即可）</label>
+              <input id="contact" name="contact" placeholder="微信/邮箱/手机号（任选其一）" required />
+            </div>
+            <div class="field">
+              <label for="direction">合作方向</label>
+              <select id="direction" name="direction" required>
+                <option value="" selected disabled>请选择</option>
+                <option>共建内容（树洞/书信/案例）</option>
+                <option>联合活动（线上/线下）</option>
+                <option>专家支持（心理/教育）</option>
+                <option>校园落地（班会/家长会）</option>
+                <option>其他</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="detail2">补充说明（资源/诉求/合作方式）</label>
+              <textarea id="detail2" name="detail2" placeholder="例如：我们可提供讲师/场地/案例；希望一起做…"></textarea>
+            </div>
+          </div>
+
+          <div class="mactions">
+            <div class="note">
+              说明：此信息仅用于合作沟通，不会公开展示。<br>
+              你也可以导出 JSON 发给开发同学对接后端。
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <button class="mini" id="copyCoopJson" type="button">复制提交内容</button>
+              <button class="mini" id="cancelCoop" type="button">取消</button>
+              <button class="mini primary" type="submit">提交</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">已完成</div>
+
+  <script>
+    const LS_KEY = 'empathyCommunityData_v1';
+    const LS_LIKES = 'empathyCommunityLikes_v1';
+
+    const TAB_LABEL = {
+      treehole: '🌳 家长树洞',
+      youth: '✉️ 青年心声',
+      cases: '📚 真实案例',
+      board: '💬 跨代留言'
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    let state = {
+      tab: 'treehole',
+      q: '',
+      tag: '',
+      sort: 'hot',
+      selectedId: null,
+      data: []
+    };
+
+    function nowISO(){ return new Date().toISOString(); }
+    function fmt(ts){
+      const d = new Date(ts);
+      const pad = (n) => String(n).padStart(2,'0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+    function uid(){
+      return 'p_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
+    function toast(msg){
+      const t = $('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(()=>t.classList.remove('show'), 2200);
+    }
+
+    function load(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        if(raw){
+          state.data = JSON.parse(raw);
+          if(!Array.isArray(state.data)) state.data = [];
+        }else{
+          state.data = seedData();
+          save();
+        }
+      }catch(e){
+        state.data = seedData();
+        save();
+      }
+    }
+    function save(){
+      localStorage.setItem(LS_KEY, JSON.stringify(state.data));
+      updateCounts();
+    }
+
+    function seedData(){
+      return [
+        {
+          id: uid(),
+          type:'treehole',
+          title:'孩子沉迷手机，我越说他越反感',
+          content:'最近孩子每天回家就刷手机，我一提醒他就顶嘴。其实我担心的是学习和视力，但一开口就变成指责。有没有更好的沟通方式？',
+          tags:['手机使用','学习压力','亲子冲突'],
+          author:'匿名家长',
+          createdAt: nowISO(),
+          likes: 3,
+          reports: 0,
+          comments:[
+            {id: uid(), createdAt: nowISO(), author:'同路人', text:'先共情感受，再表达担心。比如“我看到你放松很重要，我也会担心作业被耽误…”'}
+          ]
+        },
+        {
+          id: uid(),
+          type:'youth',
+          title:'我不是不听话，只是想被理解',
+          content:'每次我表达想法，爸妈都说“你还小不懂”。我会更想沉默。其实我希望他们先听完，再告诉我担心什么。',
+          tags:['被理解','边界','沟通方式'],
+          author:'匿名',
+          createdAt: nowISO(),
+          likes: 5,
+          reports: 0,
+          comments:[]
+        },
+        {
+          id: uid(),
+          type:'cases',
+          title:'【案例】成绩下滑引发的争吵，怎么转向“共同解决”',
+          content:'情境：家长发现成绩下滑→质问→孩子抵触.\n\n转折：家长先描述观察（非评价）：“我看到这次数学从90到78。”\n表达感受与需要：“我有点焦虑，因为我很在乎你能跟上节奏。”\n提出请求：“我们一起看看是哪里卡住？我愿意陪你找方法。”\n\n结果：孩子愿意说出压力与不会的点，双方共定学习安排。',
+          tags:['学习规划','非暴力沟通','案例复盘'],
+          author:'社区案例库',
+          createdAt: nowISO(),
+          likes: 8,
+          reports: 0,
+          comments:[]
+        },
+        {
+          id: uid(),
+          type:'board',
+          title:'一句话留言：今天先把情绪放下，再讨论事情',
+          content:'如果你此刻很生气，先暂停 10 分钟做几次深呼吸。关系比输赢更重要。',
+          tags:['情绪管理','提醒'],
+          author:'匿名',
+          createdAt: nowISO(),
+          likes: 2,
+          reports: 0,
+          comments:[]
+        }
+      ];
+    }
+
+    function getLikesMap(){
+      try{
+        const raw = localStorage.getItem(LS_LIKES);
+        return raw ? JSON.parse(raw) : {};
+      }catch(e){ return {}; }
+    }
+    function setLikesMap(map){
+      localStorage.setItem(LS_LIKES, JSON.stringify(map));
+    }
+
+    function updateCounts(){
+      const by = {treehole:0,youth:0,cases:0,board:0};
+      state.data.forEach(p => { if(by[p.type] != null) by[p.type]++; });
+      $('c_treehole').textContent = by.treehole;
+      $('c_youth').textContent = by.youth;
+      $('c_cases').textContent = by.cases;
+      $('c_board').textContent = by.board;
+    }
+
+    function allTagsForTab(tab){
+      const set = new Set();
+      state.data.filter(p => p.type === tab).forEach(p => (p.tags||[]).forEach(t => set.add(t)));
+      return Array.from(set).slice(0, 30);
+    }
+
+    function filtered(){
+      const q = (state.q||'').trim().toLowerCase();
+      const tag = state.tag;
+      let items = state.data.filter(p => p.type === state.tab);
+
+      if(q){
+        items = items.filter(p => {
+          const hay = `${p.title} ${p.content} ${(p.tags||[]).join(' ')}`.toLowerCase();
+          return hay.includes(q);
+        });
+      }
+      if(tag){
+        items = items.filter(p => (p.tags||[]).includes(tag));
+      }
+
+      if(state.sort === 'hot'){
+        items = items.slice().sort((a,b) => (b.likes||0) - (a.likes||0) || (new Date(b.createdAt)-new Date(a.createdAt)));
+      }else{
+        items = items.slice().sort((a,b) => new Date(b.createdAt)-new Date(a.createdAt));
+      }
+      return items;
+    }
+
+    function renderChips(){
+      const root = $('chips');
+      root.innerHTML = '';
+      const tags = allTagsForTab(state.tab);
+      if(tags.length === 0){
+        root.innerHTML = '<span class="hint">本分区暂无标签</span>';
+        return;
+      }
+      const make = (label, active) => {
+        const el = document.createElement('div');
+        el.className = 'chip' + (active ? ' active' : '');
+        el.textContent = label;
+        el.onclick = () => {
+          state.tag = (state.tag === label) ? '' : label;
+          render();
+        };
+        return el;
+      };
+      root.appendChild(make('全部', state.tag === ''));
+      tags.forEach(t => root.appendChild(make(t, state.tag === t)));
+    }
+
+    function renderList(){
+      const list = $('list');
+      const items = filtered();
+      list.innerHTML = '';
+      $('listEmpty').style.display = items.length ? 'none' : 'block';
+
+      $('listTitle').textContent = `${TAB_LABEL[state.tab]} · ${items.length} 条`;
+
+      items.forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'item' + (p.id === state.selectedId ? ' active' : '');
+        const snippet = (p.content || '').replace(/\s+/g,' ').slice(0, 64) + ((p.content||'').length>64 ? '…' : '');
+        el.innerHTML = `
+          <div class="item-top">
+            <div style="min-width:0">
+              <p class="item-title">${escapeHtml(p.title || '(无标题)')}</p>
+              <div class="item-meta">${escapeHtml(p.author || '匿名')} · ${fmt(p.createdAt)} · 👍 ${p.likes||0} · 💬 ${(p.comments||[]).length}</div>
+            </div>
+          </div>
+          <div class="item-meta" style="margin-top:8px">${escapeHtml(snippet)}</div>
+          <div class="badges">${(p.tags||[]).slice(0,4).map(t=>`<span class="badge">${escapeHtml(t)}</span>`).join('')}</div>
+        `;
+        el.onclick = () => {
+          state.selectedId = p.id;
+          renderDetail();
+          renderList();
+          location.hash = `#${state.tab}/${p.id}`;
+        };
+        list.appendChild(el);
+      });
+
+      if(!state.selectedId && items[0]){
+        state.selectedId = items[0].id;
+        renderDetail();
+        renderList();
+      }
+      if(state.selectedId && !items.some(x => x.id === state.selectedId)){
+        state.selectedId = items[0]?.id || null;
+        renderDetail();
+        renderList();
+      }
+    }
+
+    function renderDetail(){
+      const root = $('detail');
+      const p = state.data.find(x => x.id === state.selectedId && x.type === state.tab);
+      if(!p){
+        root.innerHTML = `<div class="empty">请选择左侧一条内容查看详情。</div>`;
+        return;
+      }
+      const likesMap = getLikesMap();
+      const liked = !!likesMap[p.id];
+
+      root.innerHTML = `
+        <div>
+          <h2>${escapeHtml(p.title || '(无标题)')}</h2>
+          <div class="meta">${escapeHtml(p.author || '匿名')} · ${fmt(p.createdAt)} · <strong>👍 ${p.likes||0}</strong> · 💬 ${(p.comments||[]).length}</div>
+          <div class="badges" style="margin-top:10px">
+            ${(p.tags||[]).map(t=>`<span class="badge">${escapeHtml(t)}</span>`).join('')}
+          </div>
+
+          <div class="text">${escapeHtml(p.content || '')}</div>
+
+          <div class="actions">
+            <button class="mini primary" id="likeBtn">${liked ? '💛 已点赞' : '👍 点赞'}</button>
+            <button class="mini" id="commentFocus">💬 写留言</button>
+            <button class="mini" id="deleteBtn" title="仅用于演示：删除本条（会同步到本机数据）">🗑 删除</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div style="font-weight:1000;font-size:13px;margin-bottom:6px">留言（建议温和表达）</div>
+          <div class="comment-box">
+            <textarea id="commentText" placeholder="写下你的理解/建议/共情回应…（不要包含隐私）"></textarea>
+            <button class="mini primary" id="sendComment" type="button">发送</button>
+          </div>
+
+          <div class="comment-list" id="commentList">
+            ${(p.comments||[]).length ? (p.comments||[]).slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(c => `
+              <div class="comment">
+                <div class="cmeta">${escapeHtml(c.author || '匿名')} · ${fmt(c.createdAt)}</div>
+                <div class="ctext">${escapeHtml(c.text || '')}</div>
+              </div>
+            `).join('') : `<div class="empty">还没有留言。你可以成为第一个温柔回应的人。</div>`}
+          </div>
+        </div>
+      `;
+
+      $('likeBtn').onclick = () => {
+        const map = getLikesMap();
+        if(map[p.id]){
+          delete map[p.id];
+          p.likes = Math.max(0, (p.likes||0) - 1);
+          setLikesMap(map);
+          save();
+          renderDetail();
+          renderList();
+        }else{
+          map[p.id] = true;
+          p.likes = (p.likes||0) + 1;
+          setLikesMap(map);
+          save();
+          renderDetail();
+          renderList();
+        }
+      };
+
+      $('sendComment').onclick = () => {
+        const txt = ($('commentText').value || '').trim();
+        if(!txt) return toast('请先输入留言内容');
+        if(txt.length > 600) return toast('留言太长了（建议 600 字以内）');
+        (p.comments = p.comments || []).push({
+          id: uid(),
+          createdAt: nowISO(),
+          author: '匿名',
+          text: txt
+        });
+        $('commentText').value = '';
+        save();
+        renderDetail();
+        renderList();
+        toast('留言已发送');
+      };
+
+      $('commentFocus').onclick = () => $('commentText').focus();
+
+      $('deleteBtn').onclick = () => {
+        if(!confirm('确定删除这条内容吗？（仅影响当前浏览器）')) return;
+        state.data = state.data.filter(x => x.id !== p.id);
+        save();
+        state.selectedId = null;
+        render();
+        toast('已删除');
+      };
+    }
+
+    function render(){
+      renderChips();
+      renderList();
+      renderDetail();
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#039;');
+    }
+
+    function setTab(tab){
+      state.tab = tab;
+      state.tag = '';
+      state.selectedId = null;
+      document.querySelectorAll('#nav button').forEach(b=>{
+        b.classList.toggle('active', b.dataset.tab === tab);
+      });
+      render();
+    }
+
+    function toggleSort(){
+      state.sort = (state.sort === 'hot') ? 'new' : 'hot';
+      $('btnSort').textContent = state.sort === 'hot' ? '🔥 最热' : '🕒 最新';
+      renderList();
+    }
+
+    function applyHash(){
+      const h = (location.hash||'').replace(/^#/,'').trim();
+      const m = h.match(/^([a-z]+)\/(.+)$/);
+      if(!m) return;
+      const tab = m[1];
+      const id = m[2];
+      if(!TAB_LABEL[tab]) return;
+      setTab(tab);
+      state.selectedId = id;
+      renderList();
+      renderDetail();
+    }
+
+    function copyLink(){
+      const p = state.data.find(x => x.id === state.selectedId && x.type === state.tab);
+      if(!p) return toast('请先选择一条内容');
+      const link = location.href.split('#')[0] + `#${state.tab}/${p.id}`;
+      navigator.clipboard?.writeText(link).then(()=>toast('链接已复制')).catch(()=>{
+        const ta = document.createElement('textarea');
+        ta.value = link;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        toast('链接已复制');
+      });
+    }
+
+    function report(){
+      const p = state.data.find(x => x.id === state.selectedId && x.type === state.tab);
+      if(!p) return toast('请先选择一条内容');
+      p.reports = (p.reports||0) + 1;
+      save();
+      toast('已举报（演示版）：将由审核处理');
+    }
+
+    const composerBackdrop = $('composerBackdrop');
+    function openComposer(){
+      composerBackdrop.classList.add('show');
+      composerBackdrop.setAttribute('aria-hidden','false');
+      $('type').value = state.tab;
+      setTimeout(()=> $('title').focus(), 30);
+    }
+    function closeComposer(){
+      composerBackdrop.classList.remove('show');
+      composerBackdrop.setAttribute('aria-hidden','true');
+    }
+
+    $('btnNew').onclick = openComposer;
+    $('btnNew2').onclick = openComposer;
+    $('closeComposer').onclick = closeComposer;
+    $('cancelComposer').onclick = closeComposer;
+    composerBackdrop.addEventListener('click', (e)=>{ if(e.target === composerBackdrop) closeComposer(); });
+
+    $('composerForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const type = $('type').value;
+      const title = ($('title').value||'').trim();
+      const content = ($('content').value||'').trim();
+      const tagsRaw = ($('tags').value||'').trim();
+      const anon = $('anon').value;
+      const nick = ($('nickname').value||'').trim();
+
+      if(!title || !content) return toast('请填写标题和内容');
+      if(content.length > 4000) return toast('内容太长了（建议 4000 字以内）');
+
+      const tags = tagsRaw ? tagsRaw.split(/[，,]/).map(s=>s.trim()).filter(Boolean).slice(0,8) : [];
+      const author = (anon === 'yes') ? '匿名' + (type==='treehole'?'家长':'') : (nick || '用户');
+
+      const post = {
+        id: uid(),
+        type,
+        title,
+        content,
+        tags,
+        author,
+        createdAt: nowISO(),
+        likes: 0,
+        reports: 0,
+        comments: []
+      };
+
+      state.data.unshift(post);
+      save();
+
+      closeComposer();
+      $('composerForm').reset();
+
+      setTab(type);
+      state.selectedId = post.id;
+      render();
+      toast('发布成功');
+    });
+
+    $('q').addEventListener('input', () => {
+      state.q = $('q').value;
+      renderList();
+      renderDetail();
+    });
+    $('btnClearQ').onclick = () => {
+      $('q').value = '';
+      state.q = '';
+      renderList();
+      renderDetail();
+    };
+
+    function exportData(){
+      const payload = { version: 1, exportedAt: nowISO(), data: state.data };
+      const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `empathy-community-export-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      toast('已导出 JSON');
+    }
+    function importDataFile(file){
+      const reader = new FileReader();
+      reader.onload = () => {
+        try{
+          const obj = JSON.parse(reader.result);
+          const data = obj.data || obj;
+          if(!Array.isArray(data)) throw new Error('格式不正确');
+          state.data = data.filter(x => x && x.id && x.type && x.title != null);
+          save();
+          render();
+          toast('导入成功');
+        }catch(err){
+          toast('导入失败：JSON 格式不正确');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    $('btnExport').onclick = exportData;
+    $('btnImport').onclick = () => $('importFile').click();
+    $('importFile').addEventListener('change', (e)=>{
+      const file = e.target.files?.[0];
+      if(file) importDataFile(file);
+      e.target.value = '';
+    });
+
+    const coopBackdrop = $('coopBackdrop');
+    function openCoop(){
+      coopBackdrop.classList.add('show');
+      coopBackdrop.setAttribute('aria-hidden','false');
+      setTimeout(()=> $('org').focus(), 30);
+    }
+    function closeCoop(){
+      coopBackdrop.classList.remove('show');
+      coopBackdrop.setAttribute('aria-hidden','true');
+    }
+    $('btnJoin').onclick = openCoop;
+    $('closeCoop').onclick = closeCoop;
+    $('cancelCoop').onclick = closeCoop;
+    coopBackdrop.addEventListener('click', (e)=>{ if(e.target === coopBackdrop) closeCoop(); });
+
+    function buildCoopPayload(){
+      const data = Object.fromEntries(new FormData($('coopForm')).entries());
+      return { type: 'coop-intent', createdAt: nowISO(), ...data };
+    }
+    $('copyCoopJson').onclick = async () => {
+      const payload = buildCoopPayload();
+      const txt = JSON.stringify(payload, null, 2);
+      try{
+        await navigator.clipboard.writeText(txt);
+        toast('已复制 JSON（可发给开发同学对接）');
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = txt;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        toast('已复制 JSON');
+      }
+    };
+    $('coopForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const payload = buildCoopPayload();
+      window.dispatchEvent(new CustomEvent('community:join', { detail: payload }));
+      closeCoop();
+      $('coopForm').reset();
+      toast('已提交（演示版）');
+    });
+
+    window.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape'){
+        if(composerBackdrop.classList.contains('show')) closeComposer();
+        if(coopBackdrop.classList.contains('show')) closeCoop();
+      }
+      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){
+        e.preventDefault();
+        $('q').focus();
+      }
+    });
+
+    document.querySelectorAll('#nav button').forEach(btn=>{
+      btn.addEventListener('click', ()=> setTab(btn.dataset.tab));
+    });
+
+    $('btnSort').onclick = toggleSort;
+    $('btnShare').onclick = copyLink;
+    $('btnReport').onclick = report;
+
+    // Likes map
+    function getLikesMap(){
+      try{
+        const raw = localStorage.getItem(LS_LIKES);
+        return raw ? JSON.parse(raw) : {};
+      }catch(e){ return {}; }
+    }
+    function setLikesMap(map){
+      localStorage.setItem(LS_LIKES, JSON.stringify(map));
+    }
+
+    // boot
+    load();
+    updateCounts();
+    render();
+    applyHash();
+    window.addEventListener('hashchange', applyHash);
+  </script>
+</body>
+</html>

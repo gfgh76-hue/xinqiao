@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关系问诊室 - 亲子沟通AI助手</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        .bg-light-green { background-color: #f0fdf4; }
+        .text-green-primary { color: #166534; }
+        .btn-green { background-color: #16a34a; color: white; }
+        .btn-green:hover { background-color: #15803d; }
+        .shadow-soft { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .card-hover { transition: transform 0.2s ease; }
+        .card-hover:hover { transform: translateY(-4px); }
+    </style>
+</head>
+<body class="bg-light-green min-h-screen">
+    <header class="container mx-auto py-4 px-6 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+                <i class="fa fa-comments text-white text-xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-green-primary">关系问诊室</h1>
+        </div>
+        <nav class="hidden md:flex">
+            <a href="#" class="text-green-primary hover:text-green-700 mx-3">首页</a>
+            <a href="#" class="text-green-primary hover:text-green-700 mx-3">场景库</a>
+            <a href="#" class="text-green-primary hover:text-green-700 mx-3">AI助手</a>
+            <a href="#" class="text-green-primary hover:text-green-700 mx-3">资源中心</a>
+        </nav>
+        <button class="md:hidden text-green-primary text-xl">
+            <i class="fa fa-bars"></i>
+        </button>
+    </header>
+
+    <main class="container mx-auto py-8 px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-green-primary mb-4">心桥解码 · 陪你破解亲子沟通难题</h2>
+            <p class="text-gray-700 max-w-2xl mx-auto text-lg">
+                基于非暴力沟通理论，结合20+青少年成长典型场景，让亲子对话更顺畅
+            </p>
+        </div>
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold text-green-primary mb-6 text-center">高频沟通场景</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl shadow-soft p-6 card-hover">
+                    <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
+                        <i class="fa fa-mobile text-green-500 text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-2">手机管控冲突</h4>
+                    <p class="text-gray-600 mb-4">孩子沉迷手机，拒绝放下写作业</p>
+                    <a href="#ai-chat" class="btn-green px-4 py-2 rounded-lg inline-block">
+                        立即模拟 <i class="fa fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+                <div class="bg-white rounded-xl shadow-soft p-6 card-hover">
+                    <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
+                        <i class="fa fa-book text-green-500 text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-2">学习规划分歧</h4>
+                    <p class="text-gray-600 mb-4">孩子抗拒补习/制定学习计划</p>
+                    <a href="#ai-chat" class="btn-green px-4 py-2 rounded-lg inline-block">
+                        立即模拟 <i class="fa fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+                <div class="bg-white rounded-xl shadow-soft p-6 card-hover">
+                    <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
+                        <i class="fa fa-users text-green-500 text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-2">亲子情绪对抗</h4>
+                    <p class="text-gray-600 mb-4">沟通时双方容易发火、冷战</p>
+                    <a href="#ai-chat" class="btn-green px-4 py-2 rounded-lg inline-block">
+                        立即模拟 <i class="fa fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="flex flex-col md:flex-row gap-8 mb-12">
+ 
+            <div class="md:w-1/2">
+                <h3 class="text-2xl font-bold text-green-primary mb-6">为什么选择我们？</h3>
+                <div class="space-y-4">
+                    <div class="bg-white p-4 rounded-lg shadow-soft flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white shrink-0">
+                            <i class="fa fa-shield"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold mb-1">0压力演练环境</h5>
+                            <p class="text-gray-600 text-sm">无需担心情绪失控，AI陪你反复练习直到找到合适的沟通方式</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-soft flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white shrink-0">
+                            <i class="fa fa-file-text"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold mb-1">话术库一键复制</h5>
+                            <p class="text-gray-600 text-sm">整理100+高情商沟通话术，直接套用解决80%的亲子冲突</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-soft flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white shrink-0">
+                            <i class="fa fa-line-chart"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold mb-1">沟通能力成长曲线</h5>
+                            <p class="text-gray-600 text-sm">记录你的沟通练习轨迹，直观看到表达能力的提升</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:w-1/2 bg-white rounded-xl shadow-soft p-6">
+                <h3 class="text-2xl font-bold text-green-primary mb-6">家长的真实反馈</h3>
+                <div class="space-y-6">
+                    <div class="border-b border-gray-100 pb-4">
+                        <div class="flex items-center mb-2">
+                            <img src="https://picsum.photos/id/64/40/40" alt="用户头像" class="w-10 h-10 rounded-full mr-3">
+                            <div>
+                                <h6 class="font-semibold">李女士 · 12岁男孩妈妈</h6>
+                                <div class="text-yellow-400">
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">"模拟3次手机管控的对话后，我终于学会了先共情再沟通，孩子不再一听到手机就炸毛了"</p>
+                    </div>
+                    <div>
+                        <div class="flex items-center mb-2">
+                            <img src="https://picsum.photos/id/65/40/40" alt="用户头像" class="w-10 h-10 rounded-full mr-3">
+                            <div>
+                                <h6 class="font-semibold">张先生 · 15岁女孩爸爸</h6>
+                                <div class="text-yellow-400">
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-half-o"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">"AI给出的阶梯式沟通方案太实用了，从安抚情绪到探寻需求，每一步都有具体的话可以说"</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-xl shadow-soft p-8 mb-12">
+            <h3 class="text-2xl font-bold text-green-primary mb-6 text-center">亲子沟通状态小测</h3>
+            <div class="max-w-2xl mx-auto">
+                <div class="mb-6">
+                    <p class="text-lg mb-4">Q1: 你和孩子沟通时，情绪失控的频率是？</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-green-50 transition-colors">
+                            经常（每周3次以上）
+                        </button>
+                        <button class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-green-50 transition-colors">
+                            偶尔（每周1-2次）
+                        </button>
+                        <button class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-green-50 transition-colors">
+                            很少（每月1-2次）
+                        </button>
+                        <button class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-green-50 transition-colors">
+                            几乎没有
+                        </button>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg mb-4">Q2: 孩子是否愿意主动和你分享心事？</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-green-50 transition-colors">
+                            完全不愿意
+                        </button>
+                        <button class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-green-50 transition-colors">
+                            只分享开心的事
+                        </button>
+                        <button class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-green-50 transition-colors">
+                            偶尔分享不开心的事
+                        </button>
+                        <button class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-green-50 transition-colors">
+                            大部分事都会分享
+                        </button>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button class="btn-green px-8 py-3 rounded-lg font-medium shadow-soft">
+                        查看测评结果 <i class="fa fa-magic ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold text-green-primary mb-6 text-center">沟通资源预览</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 话术模板 -->
+                <div class="bg-white rounded-xl shadow-soft p-6">
+                    <h4 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fa fa-file-text-o text-green-500 mr-2"></i> 沟通话术模板
+                    </h4>
+                    <div class="border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
+                        <p class="text-gray-700 font-semibold mb-2">手机管控 - 共情开场</p>
+                        <p class="text-gray-600">"妈妈看到你玩手机玩得很开心，突然让你停下来肯定很不舒服，对不对？"</p>
+                    </div>
+                    <button class="text-green-primary hover:text-green-700 flex items-center">
+                        查看全部话术 <i class="fa fa-angle-down ml-1"></i>
+                    </button>
+                </div>
+                <div class="bg-white rounded-xl shadow-soft p-6">
+                    <h4 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fa fa-script text-green-500 mr-2"></i> 场景脚本示例
+                    </h4>
+                    <div class="border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
+                        <p class="text-gray-700 font-semibold mb-2">学习规划分歧 - 需求探寻</p>
+                        <p class="text-gray-600">"你不想报数学补习班，是觉得压力太大，还是觉得补习内容对你没用呀？"</p>
+                    </div>
+                    <button class="text-green-primary hover:text-green-700 flex items-center">
+                        查看全部脚本 <i class="fa fa-angle-down ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="ai-chat" class="bg-white rounded-xl shadow-soft p-8 mb-12">
+            <h3 class="text-2xl font-bold text-green-primary mb-6 text-center">AI亲子沟通助手</h3>
+            <div class="border border-gray-200 rounded-lg p-4 h-80 overflow-y-auto mb-4 bg-gray-50" id="chat-history">
+                <div class="flex gap-3 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white">AI</div>
+                    <div class="bg-green-100 p-3 rounded-lg rounded-tl-none max-w-[80%]">
+                        你好~我是你的亲子沟通AI助手！可以和我说说你遇到的沟通难题（比如“孩子玩手机不肯写作业”），我会陪你模拟对话、给出解决方案~
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <input type="text" placeholder="请描述你的亲子沟通问题..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                <button class="btn-green px-6 py-2 rounded-lg">
+                    <i class="fa fa-paper-plane mr-1"></i> 发送
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="container mx-auto px-6 text-center">
+            <div class="flex justify-center gap-6 mb-4">
+                <a href="#" class="text-gray-600 hover:text-green-500"><i class="fa fa-weixin text-xl"></i></a>
+                <a href="#" class="text-gray-600 hover:text-green-500"><i class="fa fa-phone text-xl"></i></a>
+                <a href="#" class="text-gray-600 hover:text-green-500"><i class="fa fa-envelope text-xl"></i></a>
+            </div>
+            <p class="text-gray-600">© 2025 关系问诊室 | 用科学沟通搭建亲子信任桥梁</p>
+            <p class="text-gray-500 text-sm mt-2">隐私声明 | 使用条款 | 联系我们</p>
+        </div>
+    </footer>
+
+    <script>
+        // 输入框回车发送
+        const input = document.querySelector('input[placeholder="请描述你的亲子沟通问题..."]');
+        const sendBtn = document.querySelector('button.btn-green:has(.fa-paper-plane)');
+        const chatHistory = document.getElementById('chat-history');
+
+        // 发送消息函数
+        function sendMessage() {
+            const text = input.value.trim();
+            if (!text) return;
+
+            // 添加用户消息
+            const userMsg = `
+                <div class="flex gap-3 mb-4 justify-end">
+                    <div class="bg-gray-200 p-3 rounded-lg rounded-tr-none max-w-[80%]">
+                        ${text}
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-white">你</div>
+                </div>
+            `;
+            chatHistory.innerHTML += userMsg;
+            input.value = '';
+
+            // 模拟AI回复
+            setTimeout(() => {
+                const aiReply = `
+                    <div class="flex gap-3 mb-4">
+                        <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white">AI</div>
+                        <div class="bg-green-100 p-3 rounded-lg rounded-tl-none max-w-[80%]">
+                            谢谢你的分享！针对「${text}」这个问题，我建议先尝试共情孩子的情绪，比如："我知道你现在${text.includes('手机') ? '不想放下手机' : '有自己的想法'}，妈妈/爸爸能理解你的感受"，再慢慢引导沟通~ 需要我模拟完整对话吗？
+                        </div>
+                    </div>
+                `;
+                chatHistory.innerHTML += aiReply;
+                // 滚动到底部
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }, 1000);
+
+            // 滚动到底部
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        // 绑定事件
+        sendBtn.addEventListener('click', sendMessage);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // 测评按钮交互
+        const testButtons = document.querySelectorAll('.bg-white button:not(.btn-green)');
+        testButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 清除同组选中状态
+                const siblings = Array.from(btn.parentElement.children);
+                siblings.forEach(s => {
+                    s.classList.remove('bg-green-100', 'border-green-500');
+                    s.classList.add('border-gray-200');
+                });
+                // 设置当前选中
+                btn.classList.remove('border-gray-200');
+                btn.classList.add('bg-green-100', 'border-green-500');
+            });
+        });
+    </script>
+</body>
+</html>

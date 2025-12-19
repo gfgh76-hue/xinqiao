@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="doc-title">00后亚文化语言速查手册 - 演示版</title>
+    <style>
+        /* --- 0. 全局变量与重置 --- */
+        :root {
+            --primary: #8e44ad; /* 主题紫 */
+            --primary-light: #f4ecf7;
+            --accent: #f39c12; /* 橙色点缀 */
+            --bg-body: #f5f6fa;
+            --bg-paper: #fdfbf7; /* 米白纸张 */
+            --text-main: #2c3e50;
+            --text-light: #7f8c8d;
+            --shadow-book: 0 20px 50px rgba(0,0,0,0.2);
+            --shadow-page: inset 20px 0 50px rgba(0,0,0,0.05); /* 书脊阴影 */
+            --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --book-width: 900px;
+            --book-height: 600px;
+        }
+
+        /* 夜间模式变量 */
+        body.dark-mode {
+            --bg-body: #1a1a1a;
+            --bg-paper: #2c2c2c;
+            --text-main: #ecf0f1;
+            --text-light: #bdc3c7;
+            --primary-light: #3b3b3b;
+            --shadow-page: inset 20px 0 50px rgba(0,0,0,0.5);
+        }
+
+	body.dark-mode .back {
+    		box-shadow: inset -20px 0 50px rgba(0,0,0,0.5);
+	}
+
+
+        * { box-sizing: border-box; transition: all 0.3s ease; }
+        body { margin: 0; padding: 0; font-family: var(--font-main); background-color: var(--bg-body); overflow: hidden; height: 100vh; color: var(--text-main); }
+        button { cursor: pointer; border: none; outline: none; font-family: inherit; }
+
+        /* --- 1. 首页入口 (Home View) --- */
+        #home-view {
+            display: flex; justify-content: center; align-items: center; height: 100%;
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            position: absolute; width: 100%; z-index: 10; transition: transform 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+        }
+        #home-view.hidden { transform: translateY(-100%); pointer-events: none; }
+
+        .hero-card {
+            background: rgba(255,255,255,0.95); width: 800px; height: 450px;
+            border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            display: flex; overflow: hidden; position: relative;
+        }
+        .hero-cover {
+            width: 40%; background: linear-gradient(to bottom right, #8e44ad, #c0392b);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; color: white;
+            position: relative;
+        }
+        .hero-cover::after { content: ''; position: absolute; right: 0; top:0; width: 10px; height:100%; background: linear-gradient(to right, transparent, rgba(0,0,0,0.2)); }
+        .hero-icon { font-size: 80px; margin-bottom: 20px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2)); }
+        .hero-content { width: 60%; padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+        .hero-tag { display: inline-block; background: var(--primary-light); color: var(--primary); padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; width: fit-content; margin-bottom: 15px; }
+        .hero-title { font-size: 32px; font-weight: 800; margin: 0 0 15px 0; color: #2c3e50; line-height: 1.2; }
+        .hero-desc { color: #7f8c8d; line-height: 1.6; margin-bottom: 30px; font-size: 15px; }
+        .hero-stats { display: flex; gap: 20px; margin-bottom: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+        .stat-item strong { display: block; font-size: 18px; color: #333; }
+        .stat-item span { font-size: 12px; color: #999; }
+        
+        .btn-group { display: flex; gap: 15px; }
+        .btn-primary { flex: 1; background: var(--primary); color: white; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 16px; box-shadow: 0 5px 15px rgba(142, 68, 173, 0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(142, 68, 173, 0.4); }
+        .btn-secondary { flex: 1; background: transparent; border: 2px solid #eee; color: #666; padding: 13px; border-radius: 10px; font-weight: bold; }
+        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* --- 2. 阅读器容器 (Reader View) --- */
+        #reader-view {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; opacity: 0; transition: opacity 0.5s 0.3s;
+            pointer-events: none; /* 初始不可点 */
+        }
+        #reader-view.active { opacity: 1; pointer-events: all; }
+
+        /* 顶部工具栏 */
+        .toolbar-top {
+            height: 60px; display: flex; justify-content: space-between; align-items: center; padding: 0 30px;
+            background: var(--bg-body); z-index: 5;
+        }
+        .toolbar-title { font-weight: bold; color: var(--text-main); }
+        .tool-icons i { margin-left: 20px; font-style: normal; font-size: 18px; color: var(--text-main); opacity: 0.6; cursor: pointer; }
+        .tool-icons i:hover { opacity: 1; color: var(--primary); }
+
+        /* 书本舞台 */
+        .book-stage {
+            flex: 1; display: flex; justify-content: center; align-items: center; perspective: 2000px;
+            padding: 20px; overflow: hidden;
+        }
+
+        /* 3D 书本核心 */
+        .book {
+            width: var(--book-width); height: var(--book-height); position: relative;
+            transform-style: preserve-3d;
+        }
+
+        /* 纸张 */
+        .paper {
+    width: 50%; height: 100%; position: absolute; top: 0;
+    right: 0; /* ✅ 改成：靠右 */
+    transform-origin: left center; /* ✅ 改成：轴心在左（书脊） */
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+    background: var(--bg-paper);
+    border-radius: 0 5px 5px 0; /* ✅ 改成：圆角在右侧 */
+    z-index: 1;
+}
+        /* 封面/右页初始位置 */
+        .paper.flipped { transform: rotateY(-180deg); z-index: 2; }
+        
+        /* 页面正反面 */
+        .front, .back {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            backface-visibility: hidden; background: var(--bg-paper);
+            box-shadow: var(--shadow-page); padding: 40px; overflow: hidden;
+        }
+        .front { z-index: 2; }
+        .back { 
+    transform: rotateY(180deg); 
+    z-index: 1; 
+    border-radius: 5px 0 0 5px; /* ✅ 改成：圆角在左 */
+    border-right: 1px solid rgba(0,0,0,0.1); /* ✅ 改成：书脊线在右 */
+    /* 删掉 border-left，或者设为 none */
+    border-left: none; 
+    /* ✅ 新增：修正阴影方向（负数代表从右边往左投射） */
+    box-shadow: inset -20px 0 50px rgba(0,0,0,0.05); 
+}
+
+        /* 内容样式 */
+        .page-num { position: absolute; bottom: 20px; color: var(--text-light); font-size: 12px; width: 100%; text-align: center; left: 0;}
+        .page-content h2 { color: var(--primary); border-bottom: 2px solid var(--primary-light); padding-bottom: 10px; margin-top: 0; }
+        .page-content p { line-height: 1.8; color: var(--text-main); font-size: 15px; }
+        
+        /* 词条样式 */
+        .term-tag { display: inline-block; background: #e0f7fa; color: #006064; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; }
+        .chat-bubble {
+            background: var(--primary-light); padding: 15px; border-radius: 15px; border-bottom-left-radius: 2px;
+            margin: 15px 0; font-size: 14px; position: relative; color: var(--text-main);
+        }
+        .chat-bubble::before { content: '💬 例句'; display: block; font-size: 10px; color: var(--primary); margin-bottom: 5px; font-weight: bold; }
+        
+        .risk-alert { border-left: 3px solid #e74c3c; background: #fadbd8; padding: 10px; font-size: 13px; color: #c0392b; margin-top: 10px; }
+
+        /* 底部控制栏 */
+        .toolbar-bottom {
+            height: 60px; padding: 0 50px; display: flex; justify-content: center; align-items: center; gap: 20px;
+            background: var(--bg-body); z-index: 5;
+        }
+        .progress-bar-container { width: 300px; height: 4px; background: #ddd; border-radius: 2px; position: relative; cursor: pointer; }
+        .progress-fill { height: 100%; background: var(--primary); width: 0%; border-radius: 2px; transition: width 0.2s; }
+        .ctrl-btn { width: 40px; height: 40px; border-radius: 50%; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: var(--primary); font-weight: bold; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .ctrl-btn:active { transform: scale(0.9); }
+        .ctrl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* 目录抽屉 */
+        /* 抽屉遮罩 */
+        .drawer-backdrop{
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 90;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.25s;
+        }
+        .drawer-backdrop.open{ opacity: 1; pointer-events: auto; }
+
+        /* 搜索 UI */
+        .search-box{ display:flex; gap:10px; margin: 10px 0 8px; }
+        .search-input{
+            flex:1; padding: 10px 12px; border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.12);
+            background: var(--bg-body); color: var(--text-main);
+            outline: none;
+        }
+        .search-input:focus{ border-color: rgba(142,68,173,0.55); box-shadow: 0 0 0 3px rgba(142,68,173,0.12); }
+        .search-clear{
+            padding: 10px 12px; border-radius: 10px;
+            background: var(--primary-light); color: var(--primary);
+        }
+        .search-hint{ font-size: 12px; color: var(--text-light); margin-bottom: 10px; line-height: 1.4; }
+        .search-results{ display:flex; flex-direction:column; gap:8px; }
+        .search-item{
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.6);
+            cursor: pointer;
+        }
+        .search-item:hover{ background: var(--primary-light); }
+        .search-item .si-title{ font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+        .search-item .si-meta{ font-size: 12px; color: var(--text-light); display:flex; gap:8px; flex-wrap:wrap; }
+        .search-item .si-snippet{ font-size: 12px; color: var(--text-main); opacity: 0.9; margin-top: 6px; line-height: 1.4; }
+        .pill{
+            display:inline-flex; align-items:center; gap:6px;
+            font-size: 12px; padding: 2px 10px; border-radius: 999px;
+            background: rgba(142,68,173,0.12); color: var(--primary);
+        }
+
+        /* 更完整的暗色模式（覆盖变量） */
+        body.dark-mode{
+            --bg-body: #0b1220;
+            --bg-paper: #121a2b;
+            --text-main: #e5e7eb;
+            --text-light: #a1a1aa;
+            --primary-light: rgba(142,68,173,0.18);
+        }
+        body.dark-mode .toolbar-top,
+        body.dark-mode .toolbar-bottom{
+            background: rgba(11,18,32,0.92);
+            border-color: rgba(255,255,255,0.06);
+        }
+        body.dark-mode .drawer{
+            background: var(--bg-paper);
+            box-shadow: -5px 0 30px rgba(0,0,0,0.45);
+        }
+        body.dark-mode .drawer h3{ border-color: rgba(255,255,255,0.08); }
+        body.dark-mode .toc-item{ border-color: rgba(255,255,255,0.06); }
+        body.dark-mode .search-item{ background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
+        body.dark-mode .search-input{ border-color: rgba(255,255,255,0.10); background: rgba(255,255,255,0.04); }
+
+        .drawer {
+            position: fixed; top: 0; right: 0; width: 300px; height: 100%; background: var(--bg-paper);
+            box-shadow: -5px 0 20px rgba(0,0,0,0.1); z-index: 100;
+            transform: translateX(100%); transition: transform 0.3s; padding: 20px; overflow-y: auto;
+        }
+        .drawer.open { transform: translateX(0); }
+        .drawer h3 { border-bottom: 1px solid #eee; padding-bottom: 15px; margin-top: 0; }
+        .toc-item { padding: 12px 10px; border-bottom: 1px solid #f5f5f5; cursor: pointer; font-size: 14px; color: var(--text-main); }
+        .toc-item:hover { background: var(--primary-light); color: var(--primary); }
+        .close-drawer { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 20px; }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            :root { --book-width: 95vw; --book-height: 70vh; }
+            .hero-card { width: 90%; flex-direction: column; height: auto; }
+            .hero-cover { width: 100%; height: 150px; }
+            .hero-content { width: 100%; padding: 20px; }
+            .book { margin-left: 50%; } /* 手机端只显示右半边 */
+            .paper { width: 100%; border-radius: 5px; } /* 手机端全宽 */
+            .back { border-left: none; border-right: 1px solid #eee; }
+            /* 手机端 3D 效果减弱，主要靠内容切换 */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. 首页入口 -->
+    <div id="home-view">
+        <div class="hero-card">
+            <div class="hero-cover">
+                <div class="hero-icon">📖</div>
+                <div style="font-size: 14px; opacity: 0.8;" id="hero-version">Ver 2.0</div>
+            </div>
+            <div class="hero-content">
+                <div class="hero-tag" id="hero-tag">🔥 热门工具</div>
+                <h1 class="hero-title" id="hero-title">00后亚文化<br>语言速查手册</h1>
+                <p class="hero-desc" id="hero-desc">本手册包含：网络热梗、表情包解析、ACGN 圈层黑话、追星术语等 100+ 核心词条，助你打破代沟。</p>
+                
+                <div class="hero-stats">
+                    <div class="stat-item"><strong id="stat-1-strong">4 大</strong><span id="stat-1-span">核心板块</span></div>
+                    <div class="stat-item"><strong id="stat-2-strong">128+</strong><span id="stat-2-span">精选词条</span></div>
+                    <div class="stat-item"><strong id="stat-3-strong">1.2w</strong><span id="stat-3-span">收藏热度</span></div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="openBook()">📖 打开手册</button>
+                    <button class="btn-secondary" id="continue-btn" onclick="continueReading()">↪ 继续阅读</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 阅读器视图 -->
+    <div id="reader-view">
+        
+        <!-- 顶部工具栏 -->
+        <div class="toolbar-top">
+            <div style="display:flex; align-items:center; cursor:pointer;" onclick="closeBook()">
+                <span style="font-size:20px;">←</span>
+                <span style="font-size:14px; margin-left:8px; color:var(--text-light);">返回首页</span>
+            </div>
+            <div class="toolbar-title" id="toolbar-title">00后亚文化语言速查手册</div>
+            <div class="tool-icons">
+                <i id="search-icon" onclick="toggleSearch()" title="搜索">🔍</i>
+                <i id="theme-icon" onclick="toggleMode()" title="夜间模式">🌙</i>
+                <i id="menu-icon" onclick="toggleTOC()" title="目录">☰</i>
+            </div>
+        </div>
+
+        <!-- 3D 书本区域 -->
+        <div class="book-stage">
+            <div class="book" id="book-container">
+                <!-- 纸张将通过 JS 动态生成 -->
+            </div>
+        </div>
+
+        <!-- 底部进度栏 -->
+        <div class="toolbar-bottom">
+            <button class="ctrl-btn" onclick="turnPage('prev')">←</button>
+            <div style="font-size: 12px; color: var(--text-light);" id="chapter-info">序章</div>
+            <div class="progress-bar-container">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div style="font-size: 12px; color: var(--text-light); width: 60px; text-align:right;" id="page-num-display">1 / 10</div>
+            <button class="ctrl-btn" onclick="turnPage('next')">→</button>
+        </div>
+    </div>
+
+    <!-- 目录侧边栏 -->
+    <div class="drawer" id="toc-drawer">
+        <div class="close-drawer" onclick="toggleTOC()">×</div>
+        <h3>📚 目录</h3>
+        <div id="toc-list">
+            <!-- 目录由 JS 生成 -->
+        </div>
+    </div>
+
+    <!-- 抽屉遮罩（目录/搜索共用） -->
+    <div class="drawer-backdrop" id="drawer-backdrop" onclick="closeAllDrawers()"></div>
+
+    <!-- 搜索侧边栏 -->
+    <div class="drawer" id="search-drawer" aria-label="搜索">
+        <div class="close-drawer" onclick="toggleSearch()">×</div>
+        <h3>🔎 搜索词条</h3>
+
+        <div class="search-box">
+            <input id="search-input" class="search-input" type="text" placeholder="输入关键词：词条/释义/溯源/心理需求…" autocomplete="off" />
+            <button class="search-clear" id="search-clear" onclick="clearSearch()" title="清空">清空</button>
+        </div>
+
+        <div class="search-hint" id="search-hint">提示：支持模糊匹配；回车可定位到第一条结果。</div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+
+    <script>
+        // --- 内容配置（你主要改这里） ---
+        const BOOK_META = {
+          docTitle: '00后亚文化亲子沟通手册词条表',
+          appTitle: '00后亚文化亲子沟通手册',
+          heroTag: '👪 亲子沟通 · 词典',
+          heroTitleHtml: '00后亚文化<br>亲子沟通手册',
+          heroDesc: '收录 100个高频词汇，覆盖 网络热梗、表情包含义、周边收藏、追星文化。每个词条按「现象释义-文化溯源-心理需求三层解析法」拆解，帮助家长快速理解孩子的表达与情绪。',
+          versionText: '生成日期：2025/12/17',
+          stats: [
+            {
+              strong: '4 大',
+              span: '核心板块'
+            },
+            {
+              strong: '100',
+              span: '高频词条'
+            },
+            {
+              strong: '3 层',
+              span: '解析法'
+            }
+          ],
+          autoStats: false
+        };
+
+        // --- 数据源（把下面 bookData 替换成你的“具体内容”即可） ---
+        const bookData = [
+            {
+              type: 'cover',
+              title: '00后亚文化亲子沟通手册词条表',
+              content: ''
+            },
+            {
+              type: 'intro',
+              title: '使用说明',
+              content: '<p><strong>生成日期：</strong>2025/12/17</p><p><strong>词条数量：</strong>100个高频词汇</p><p><strong>核心板块：</strong>网络热梗、表情包含义、周边收藏、追星文化</p><p><strong>解析方法：</strong>现象释义-文化溯源-心理需求三层解析法</p><p style=\'margin-top:12px;color:#666;\'>提示：点击右下角箭头翻页；左侧目录可快速跳转到章节/词条。</p>'
+            },
+            {
+              type: 'chapter',
+              title: '网络热梗',
+              desc: '每条按「现象释义—文化溯源—心理需求」三层解析'
+            },
+            {
+              type: 'term',
+              title: 'Skibidi',
+              tag: '网络热梗',
+              def: '一个多义的感叹词/形容词，可表示"酷"、"糟糕"或纯粹为制造搞笑、混乱的无意义语气词',
+              usage: '源自YouTube动画《Skibidi Toilet》，以其荒诞风格在α世代中病毒式传播',
+              example: '追求无厘头幽默与解压；在共识语境下创造专属的社交默契和欢乐'
+            },
+            {
+              type: 'term',
+              title: 'Delulu',
+              tag: '网络热梗',
+              def: '"Delusional"（妄想）的缩写，形容不切实际的幻想或过度乐观，常带自嘲',
+              usage: '源于十多年前的K-pop粉丝圈，后经TikTok普及为通用梗',
+              example: '以幽默方式面对压力与梦想的落差；通过"敢于幻想"进行积极的自我心理暗示'
+            },
+            {
+              type: 'term',
+              title: 'yyds',
+              tag: '网络热梗',
+              def: '"永远的神"拼音首字母缩写，用于表达对人事物的极致推崇',
+              usage: '起源于电竞圈对选手的称赞，后破圈成为全网通用赞美语',
+              example: '需要简洁有力的词汇在快节奏交流中表达强烈情感，强化圈内认同'
+            },
+            {
+              type: 'term',
+              title: '绝绝子',
+              tag: '网络热梗',
+              def: '后缀"子"字格式，表示"太绝了"，程度强于"绝了"，用于赞美',
+              usage: '起源于美妆、穿搭博主分享，后经由小红书等平台扩散',
+              example: '追求表达的新颖性与夸张感，通过创造性的语言变形彰显个性与时尚度'
+            },
+            {
+              type: 'term',
+              title: 'EMO',
+              tag: '网络热梗',
+              def: '指情绪低落、伤感、忧郁的状态。"我EMO了"即"我情绪上来了"',
+              usage: '原指"Emotional Hardcore"音乐流派，现泛指一切负面情绪',
+              example: '为复杂、微妙的负面情绪找到一个简单、时尚且能被同龄人快速理解的出口'
+            },
+            {
+              type: 'term',
+              title: '躺平',
+              tag: '网络热梗',
+              def: '指一种放弃激烈竞争、主动降低欲望、追求低压力生活状态的态度',
+              usage: '源于贴吧，是对社会"内卷"压力的消极对抗式回应',
+              example: '在压力环境中寻求心理自我保护；表达对单一成功标准的不满与反思'
+            },
+            {
+              type: 'term',
+              title: '内卷/卷',
+              tag: '网络热梗',
+              def: '形容非理性的内部竞争，导致个体收益努力比下降，如同"向内演化"',
+              usage: '源自学术概念，经社会讨论后成为描述学业、职场压力的高频词',
+              example: '形象化地表达身处高度竞争环境的疲惫感与无奈，寻求共鸣'
+            },
+            {
+              type: 'term',
+              title: '破防',
+              tag: '网络热梗',
+              def: '指心理防线被突破，形容因某事受到巨大感动或冲击',
+              usage: '源自游戏术语，指"防御被打破"',
+              example: '需要词汇来描述那些直击心灵、引发强烈情感共鸣的瞬间'
+            },
+            {
+              type: 'term',
+              title: '社死',
+              tag: '网络热梗',
+              def: '"社会性死亡"的简称，指在公众面前出丑，丢脸到只想逃离地球',
+              usage: '网络社区用语，用于调侃尴尬经历',
+              example: '以夸张幽默的方式化解现实社交中的尴尬，完成自我解嘲与压力释放'
+            },
+            {
+              type: 'term',
+              title: 'cue',
+              tag: '网络热梗',
+              def: '动词，意指"提到"、"点名"。"cue我一下"就是"提到我"或"轮到我"',
+              usage: '源自英文单词，在综艺和粉丝文化中频繁使用后普及',
+              example: '适应多语言混杂的网络交流环境，追求表达的即时性与场景感'
+            },
+            {
+              type: 'term',
+              title: '氪金',
+              tag: '网络热梗',
+              def: '指在网络游戏中充值花钱',
+              usage: '日语"課金"的中文音译，原意为"收费"',
+              example: '直观描述为爱好付费的行为，隐含对消费结果的期待与讨论'
+            },
+            {
+              type: 'term',
+              title: '肝',
+              tag: '网络热梗',
+              def: '动词，指投入大量时间和精力玩游戏或完成某项任务。"爆肝"即熬夜完成',
+              usage: '因过度游戏伤肝的戏谑说法，后扩展至所有需要耗费精力的活动',
+              example: '形象化表达努力过程，在圈层内将辛苦转化为一种可炫耀的"勋章"'
+            },
+            {
+              type: 'term',
+              title: '非酋/欧皇',
+              tag: '网络热梗',
+              def: '"非酋"指运气极差的人（脸黑如非洲酋长）；"欧皇"指运气极好的人（欧洲血统的皇）',
+              usage: '源自抽卡类游戏，形容抽中稀有道具的运气',
+              example: '为概率性事件的结果提供有趣的身份标签，增加游戏过程的社交话题与趣味性'
+            },
+            {
+              type: 'term',
+              title: '蚌埠住了',
+              tag: '网络热梗',
+              def: '"绷不住了"的谐音，指情绪失控，忍不住要哭或笑出来',
+              usage: '谐音梗的流行，因发音搞笑而传播',
+              example: '利用语言的谐音意外创造幽默效果，在情绪宣泄时增加一丝喜剧色彩'
+            },
+            {
+              type: 'term',
+              title: '哈基米',
+              tag: '网络热梗',
+              def: '原指蜂蜜水，因一段配乐可爱的短视频，现常被用来称呼小猫等小动物',
+              usage: '源自日本歌曲《はちみつ（蜂蜜）》的空耳发音，经抖音传播',
+              example: '对可爱事物的高度概括和情感投射，用一个词传递出怜爱、亲昵的复杂情感'
+            },
+            {
+              type: 'term',
+              title: '泰裤辣',
+              tag: '网络热梗',
+              def: '"太酷啦"的变体发音，因某明星演唱会上不标准的发音成为梗',
+              usage: '明星事件衍生的谐音梗，因其魔性和反差感走红',
+              example: '追逐热点，通过复用和戏仿流行事件中的元素，获得参与时代对话的即时快乐'
+            },
+            {
+              type: 'term',
+              title: '尊嘟假嘟',
+              tag: '网络热梗',
+              def: '"真的假的"的可爱化、嗲声发音',
+              usage: '模仿宠物或幼儿语气的网络表达，用于卖萌或调侃',
+              example: '在沟通中软化语气、增加亲和力；通过扮演"低龄化"角色获得暂时性的情感放松'
+            },
+            {
+              type: 'term',
+              title: 'CPU/KTV/PPT',
+              tag: '网络热梗',
+              def: '均为"PUA"（精神控制）的谐音戏称，用于调侃对方在试图洗脑或说服自己',
+              usage: '为避免直接提及敏感词，同时增加调侃意味而产生的系列谐音梗',
+              example: '以幽默、隐蔽的方式，表达对他人施加精神压力行为的不满和警惕'
+            },
+            {
+              type: 'term',
+              title: '电子榨菜',
+              tag: '网络热梗',
+              def: '指吃饭时观看的视频或收听的有声内容，如同佐餐的榨菜一样下饭',
+              usage: '对数字化生活方式的生动比喻',
+              example: '形象描述一种普遍的生活习惯，将数字消费与传统生活场景有趣结合'
+            },
+            {
+              type: 'term',
+              title: '人间清醒',
+              tag: '网络热梗',
+              def: '形容对事物有清晰、透彻、不盲从的看法',
+              usage: '对一种理想化理性状态的推崇和标榜',
+              example: '表达对独立思考的追求，以及对浮夸、虚伪现象的疏离态度'
+            },
+            {
+              type: 'term',
+              title: '栓Q',
+              tag: '网络热梗',
+              def: '"Thank you"的中文发音空耳，表达感谢，但更多用于表达无语、无奈的情绪',
+              usage: '源自一位英语教学视频博主的不标准发音，后成为网络流行语',
+              example: '用幽默方式化解尴尬或无奈情境，将负面情绪转化为调侃'
+            },
+            {
+              type: 'term',
+              title: '芭比Q',
+              tag: '网络热梗',
+              def: '"完了"的意思，源自"barbecue"的发音，表示事情糟糕了、完蛋了',
+              usage: '源自游戏主播的惊呼，因其夸张的发音效果而流行',
+              example: '以戏剧化、夸张的方式表达对糟糕情况的反应，增加娱乐效果'
+            },
+            {
+              type: 'term',
+              title: '摆烂',
+              tag: '网络热梗',
+              def: '指当事情无法向好的方向发展时，就放任其往坏的方向继续发展下去',
+              usage: '源自NBA篮球术语，指为了获得更好的选秀权而故意输球，后网络化',
+              example: '表达对无力改变现状的消极应对态度，是"躺平"的另一种表现形式'
+            },
+            {
+              type: 'term',
+              title: '元宇宙',
+              tag: '网络热梗',
+              def: '指一个平行于现实世界的虚拟世界，人们可以在其中进行社交、娱乐、工作等活动',
+              usage: '源自科幻小说《雪崩》，2021年后因科技公司炒作而成为热词',
+              example: '表达对虚拟世界、数字身份的好奇与探索欲，反映对未来科技的想象'
+            },
+            {
+              type: 'term',
+              title: '种草',
+              tag: '网络热梗',
+              def: '指因为他人推荐而对某件商品产生购买欲望，如同心里"种下了一棵草"',
+              usage: '源自美妆、时尚社区，与"拔草"（购买）相对应',
+              example: '表达消费欲望被激发的状态，反映了社交电商和口碑营销的影响力'
+            },
+            {
+              type: 'chapter',
+              title: '表情包含义',
+              desc: '每条按「现象释义—文化溯源—心理需求」三层解析'
+            },
+            {
+              type: 'term',
+              title: '抽象表情包',
+              tag: '表情包含义',
+              def: '指画面粗糙、含义模糊、带有"电子包浆"（因多次转发画质变差）的图片，常以动物、影视截图为主',
+              usage: '源自早期网络低清素材的反复传播与二次创作，是"读图时代"青年用图像进行编码解码的社交暗语',
+              example: '用隐晦、幽默的方式表达难以直说的复杂情绪（如自嘲、无奈）；形成圈内人能懂的"暗号"，增强归属感'
+            },
+            {
+              type: 'term',
+              title: '吗喽',
+              tag: '表情包含义',
+              def: '"猴子"的方言谐音，常以落魄、凄惨的猴子形象出现，用于自嘲身份卑微、生活不易',
+              usage: '源自两广地区方言，通过短视频表情包流行',
+              example: '以动物形象为载体，进行安全、委婉的自我处境表达与情绪宣泄，引发广泛共鸣'
+            },
+            {
+              type: 'term',
+              title: '卡皮巴拉',
+              tag: '表情包含义',
+              def: '指水豚，因其面对任何情况都异常淡定、面无表情的形象走红，象征情绪稳定',
+              usage: '源于对水豚动物视频的二次创作，其"情绪稳定"的特质被互联网放大',
+              example: '投射对"情绪稳定"这一理想心理状态的向往，用以调侃自己或他人的情绪波动'
+            },
+            {
+              type: 'term',
+              title: 'Loopy',
+              tag: '表情包含义',
+              def: '韩国动画《小企鹅Pororo》中的小海狸形象，因其粉嫩外表和"带点疯感"的表情被制作成大量表情包',
+              usage: '动画IP经由社交媒体表情包二创翻红，脱离原剧情被赋予新含义',
+              example: '用可爱形象包装"发疯"、"摆烂"等现代情绪，达到一种"用魔法打败魔法"的解压效果'
+            },
+            {
+              type: 'term',
+              title: '猪猪侠',
+              tag: '表情包含义',
+              def: '国产动画角色，其夸张的颜艺（面部表情艺术）和"不正经"的台词截图成为表情包常客',
+              usage: '经典童年IP在表情包文化中被解构和重塑，焕发新生',
+              example: '融合怀旧情感与当代幽默，在熟悉的形象上找到新的情绪共鸣点'
+            },
+            {
+              type: 'term',
+              title: '柴犬Doge',
+              tag: '表情包含义',
+              def: '那只著名的"神烦狗"，表情包鼻祖之一，代表一种戏谑、无语、魔性的精神状态',
+              usage: '起源于2010年的一张柴犬照片，历经多年演化，成为互联网基础表情符号',
+              example: '承载着一代网民的集体记忆，其简单、魔性的表达具有跨越时间的生命力'
+            },
+            {
+              type: 'term',
+              title: '罗文姬女士',
+              tag: '表情包含义',
+              def: '韩剧《搞笑一家人》中的奶奶角色，其各种夸张、生动的表情被截取成万能表情包',
+              usage: '经典影视剧角色在社交媒体的"考古"中重新焕发价值',
+              example: '长辈形象的幽默化使用，打破了年龄的严肃感，增加了喜剧反差效果'
+            },
+            {
+              type: 'term',
+              title: 'Chiikawa',
+              tag: '表情包含义',
+              def: '日本漫画家Nagano笔下的三只小可爱，外表萌但剧情常涉及打工、生存等现实议题',
+              usage: '以"最萌的外貌过最扎心的生活"形成强烈反差，引发年轻人共鸣',
+              example: '在可爱的外壳下，含蓄地表达对现实压力的感知，实现"甜丧"风格的情感共鸣'
+            },
+            {
+              type: 'term',
+              title: '流汗黄豆',
+              tag: '表情包含义',
+              def: '经典Emoji表情"😅"的具象化、扩大化，表示无语、尴尬、不屑等复杂情绪',
+              usage: '从标准化Emoji演化出的、更具表现力和讽刺意味的亚文化变体',
+              example: '需要一个比官方表情更"有劲"、更精准地传达微妙负面情绪的工具'
+            },
+            {
+              type: 'term',
+              title: '微笑.jpg',
+              tag: '表情包含义',
+              def: '特指微信自带表情中那个嘴角上扬但眼神空洞的"微笑"表情，在年轻人语境中常表示嘲讽、敷衍或不满',
+              usage: '代际间对同一符号的解读差异，年轻人赋予了其与设计初衷相反的含义',
+              example: '用于进行非正面、但又不想直接冲突的含蓄表达，是社交中"潜台词"的视觉化'
+            },
+            {
+              type: 'term',
+              title: '"你醒啦"中式梦核',
+              tag: '表情包含义',
+              def: '配合模糊、低像素的童年老照片（如微机室、老家属楼），营造既熟悉又陌生的梦境感',
+              usage: '源自欧美"梦核"，融合中国千禧年前后的集体记忆场景，形成本土化风格',
+              example: '对过去时代的集体怀旧，在快速变化的社会中寻找一种确定性的情感锚点'
+            },
+            {
+              type: 'term',
+              title: '熊猫头',
+              tag: '表情包含义',
+              def: '以暴漫风格的熊猫头为模板，搭配不同文字，表达各种情绪，尤其是吐槽和幽默',
+              usage: '源自暴走漫画，经过本土化改造后成为中文互联网最经典的表情包模板之一',
+              example: '提供了一种高度可定制的情绪表达模板，适应多种社交场景，降低表达成本'
+            },
+            {
+              type: 'term',
+              title: '金馆长',
+              tag: '表情包含义',
+              def: '韩国演员崔成国在电影《金馆长对金馆长对金馆长》中的魔性笑脸，常用于表达得意的笑或猥琐的笑',
+              usage: '电影截图被网友挖掘，成为早期网络表情包的代表作之一',
+              example: '用夸张、戏剧化的表情传达复杂的情绪，尤其是不便直说的得意或调侃'
+            },
+            {
+              type: 'term',
+              title: '黑人问号',
+              tag: '表情包含义',
+              def: 'NBA球员尼克·杨一脸困惑的表情，用于表达疑惑、不解或震惊',
+              usage: '源自体育新闻截图，因表情极具表现力而成为全球流行的表情包',
+              example: '直观地表现困惑和疑问，比文字描述更生动有趣，适合表达各种疑惑场景'
+            },
+            {
+              type: 'term',
+              title: '悲伤蛙',
+              tag: '表情包含义',
+              def: '一只绿色的、表情悲伤的青蛙，常被用来表达悲伤、抑郁或无奈的情绪',
+              usage: '源自漫画家Matt Furie的漫画《男孩俱乐部》，后成为网络迷因',
+              example: '为负面情绪提供一个具象化的、带有幽默感的表达出口，减少直接表达负面情绪的尴尬'
+            },
+            {
+              type: 'term',
+              title: '龙王赘婿',
+              tag: '表情包含义',
+              def: '源自网络小说广告视频中夸张的剧情和表演，被截取成表情包，常带有"歪嘴一笑"',
+              usage: '网络营销素材的二次创作，因剧情夸张、表演浮夸而引发网友调侃',
+              example: '对浮夸叙事和土味文化的戏仿，用幽默方式解构网络流行文化'
+            },
+            {
+              type: 'term',
+              title: '歪嘴战神',
+              tag: '表情包含义',
+              def: '与"龙王赘婿"类似，指网络小说广告中男主角标志性的歪嘴笑，象征逆袭和反击',
+              usage: '同样源自网络小说广告，成为逆袭、打脸情节的标志性表情',
+              example: '表达对逆袭、反转情节的期待和欣赏，以及对爽文叙事模式的调侃'
+            },
+            {
+              type: 'term',
+              title: '小丑竟是我自己',
+              tag: '表情包含义',
+              def: '搭配小丑表情或图片，用于自嘲自己才是可笑、可悲的那个人',
+              usage: '源自"小丑"比喻，结合表情包文化，成为自我解嘲的流行表达',
+              example: '用自我贬低的方式化解尴尬和失败，将负面情绪转化为幽默'
+            },
+            {
+              type: 'term',
+              title: '地铁老人手机',
+              tag: '表情包含义',
+              def: '一位老人在地铁上皱着眉头看手机的表情，用于表达困惑、嫌弃或难以理解',
+              usage: '源自一张网络照片，因表情生动而成为表情包',
+              example: '生动表现对某事感到困惑、嫌弃或无法理解的情绪，比文字更有表现力'
+            },
+            {
+              type: 'term',
+              title: '汤姆猫',
+              tag: '表情包含义',
+              def: '动画《猫和老鼠》中汤姆猫的各种夸张表情和动作，被广泛用于表情包',
+              usage: '经典动画角色的二次创作，因表情丰富、动作夸张而适合制作表情包',
+              example: '借助经典动画角色的高辨识度和丰富表情，表达各种情绪，引发怀旧共鸣'
+            },
+            {
+              type: 'term',
+              title: '杰瑞鼠',
+              tag: '表情包含义',
+              def: '动画《猫和老鼠》中杰瑞鼠的机智、得意表情，常用于表达得意或机智的反应',
+              usage: '同样源自《猫和老鼠》，与汤姆猫表情包形成互补',
+              example: '表达机智、得意或幸灾乐祸的情绪，利用经典角色的形象增强表达效果'
+            },
+            {
+              type: 'term',
+              title: '佩佩蛙',
+              tag: '表情包含义',
+              def: '一只绿色的青蛙，表情多变，可以表达各种情绪，但需注意其曾被某些群体滥用',
+              usage: '最初是漫画家Matt Furie创造的温和角色，后经历复杂的网络演变',
+              example: '提供多变的表情选择，但使用时需注意语境，避免涉及不当含义'
+            },
+            {
+              type: 'term',
+              title: '奥特曼',
+              tag: '表情包含义',
+              def: '特摄剧《奥特曼》中奥特曼的各种姿势和表情，尤其是"点赞"姿势',
+              usage: '经典特摄角色的二次创作，因姿势经典而成为表情包素材',
+              example: '借助经典角色的正能量形象，表达支持、鼓励或幽默'
+            },
+            {
+              type: 'term',
+              title: '沙雕表情包',
+              tag: '表情包含义',
+              def: '泛指一切搞笑、无厘头、制作粗糙但有趣的表情包，核心在于"沙雕"（傻吊的谐音）幽默',
+              usage: '网络文化中对搞笑内容的统称，强调无厘头和搞笑效果',
+              example: '追求纯粹的欢乐和幽默感，用简单直接的方式制造笑点，缓解压力'
+            },
+            {
+              type: 'term',
+              title: '动物表情包',
+              tag: '表情包含义',
+              def: '以各种动物（如猫、狗、仓鼠等）为主角，配上拟人化文字的表情包',
+              usage: '源自人们对动物的喜爱，结合拟人化创作，形成大量表情包',
+              example: '满足人们对可爱动物的喜爱，通过拟人化表达复杂情感，增加沟通趣味性'
+            },
+            {
+              type: 'chapter',
+              title: '周边收藏',
+              desc: '每条按「现象释义—文化溯源—心理需求」三层解析'
+            },
+            {
+              type: 'term',
+              title: '娃圈',
+              tag: '周边收藏',
+              def: '指收藏、改装、养护潮流玩具人偶（如BJD、OB11、泡泡玛特等）的爱好者圈子',
+              usage: '源自日本的手办文化与中国潮玩市场的爆发性增长',
+              example: '将玩偶作为情感寄托物（"阿贝贝情结"），通过打扮、拍照、编故事，获得掌控感与陪伴感'
+            },
+            {
+              type: 'term',
+              title: '谷子',
+              tag: '周边收藏',
+              def: '"Goods"（商品）的音译，泛指动漫、游戏等IP的周边商品，如徽章、立牌、色纸等',
+              usage: '日语"グッズ"在中文宅圈的直接借用，形成圈内黑话',
+              example: '为热爱付费，通过占有实体物品来确认和维系与虚拟IP之间的情感联结'
+            },
+            {
+              type: 'term',
+              title: '痛包',
+              tag: '周边收藏',
+              def: '指挂满动漫角色徽章（吧唧）的透明单肩包，"痛"有"彰显"之意，用于展示收藏爱好',
+              usage: '源自日本，是ACGN文化中表达"粉籍"的常见方式',
+              example: '将私人爱好进行公开的、个性化的身份展示，寻求同好的识别与认同'
+            },
+            {
+              type: 'term',
+              title: 'Jellycat',
+              tag: '周边收藏',
+              def: '英国毛绒玩具品牌，其玩偶常被消费者赋予人格，为其起名、编写故事、带其旅行',
+              usage: '品牌通过"过家家"式营销，成功将产品转化为情感载体',
+              example: '满足成年人（Kidult）对柔软、安全感和童真的心理需求，是重要的情绪舒缓剂'
+            },
+            {
+              type: 'term',
+              title: 'Labubu',
+              tag: '周边收藏',
+              def: '泡泡玛特旗下热门IP精灵玩偶，曾因限量导致二手市场价格飙升，引发收藏热',
+              usage: '潮玩、盲盒经济与社交媒体的结合，催生了收藏与投资双重属性的市场',
+              example: '兼具审美愉悦、社交谈资（晒娃）和潜在价值投资的心理满足'
+            },
+            {
+              type: 'term',
+              title: 'CCD相机',
+              tag: '周边收藏',
+              def: '指使用CCD传感器的老式数码相机，因其拍摄照片带有复古颗粒感和朦胧色彩而再度流行',
+              usage: '在手机摄影高度普及的当下，作为"复古滤镜"的实体化硬件受到追捧',
+              example: '追求慢下来的拍摄过程和独特的、不可复制的物理成像质感，对抗数字时代的同质化'
+            },
+            {
+              type: 'term',
+              title: '三丽鸥',
+              tag: '周边收藏',
+              def: '日本知名IP公司（Hello Kitty，库洛米等），其联名周边（如与肯德基合作）常引发抢购',
+              usage: '经典IP通过持续的品牌联名，不断触达新一代消费者',
+              example: '为童年记忆"补票"，经典IP的稳定形象能带来持久的安全感和愉悦感'
+            },
+            {
+              type: 'term',
+              title: '棉花娃娃',
+              tag: '周边收藏',
+              def: '一种无骨或半骨的软体布偶，常以明星、动漫角色的Q版形象定制，可更换衣物',
+              usage: '起源于韩国明星应援文化，在国内发展为独立的收藏门类',
+              example: '将对虚拟或远方偶像的喜爱，转化为可以触摸、装扮、陪伴的实体，获得更真实的互动体验'
+            },
+            {
+              type: 'term',
+              title: '食玩/一番赏',
+              tag: '周边收藏',
+              def: '日本流行的零食附赠玩具，或一种抽奖式周边购买模式，具有收集乐趣和不确定性',
+              usage: '将饮食消费与收藏娱乐深度绑定，利用"抽赏"机制刺激重复购买',
+              example: '享受"收集"这一过程本身的乐趣，以及抽中稀有款的瞬间惊喜感'
+            },
+            {
+              type: 'term',
+              title: '手办',
+              tag: '周边收藏',
+              def: '动漫、游戏角色的人物模型，通常制作精细，价格较高，是宅文化的重要收藏品',
+              usage: '源自日本模型文化，随ACGN文化扩散到全球',
+              example: '对喜爱角色的实体化占有，满足收藏欲望和审美需求，是粉丝身份的标志'
+            },
+            {
+              type: 'term',
+              title: '盲盒',
+              tag: '周边收藏',
+              def: '一种随机抽选玩具的销售方式，消费者在购买前不知道具体款式，刺激收集欲望',
+              usage: '源自日本扭蛋文化，在中国经泡泡玛特等公司推广而爆发',
+              example: '享受拆盒瞬间的惊喜感和不确定性，满足收集欲和赌博心理，具有社交分享价值'
+            },
+            {
+              type: 'term',
+              title: 'GK雕像',
+              tag: '周边收藏',
+              def: 'Garage Kit的缩写，指未涂装的模型套件，通常由爱好者自行组装和上色，也有完成品出售',
+              usage: '源自模型爱好者自制文化，现已成为高端收藏品市场的一部分',
+              example: '追求极致的细节和艺术表现，满足高端收藏和审美需求，是资深爱好者的身份象征'
+            },
+            {
+              type: 'term',
+              title: '扭蛋',
+              tag: '周边收藏',
+              def: '日本流行的投币式随机玩具贩卖机，消费者投入硬币扭出随机款式的胶囊玩具',
+              usage: '日本经典的随机玩具销售方式，历史悠久，文化深厚',
+              example: '享受随机性的乐趣，以小成本获得收藏满足感，具有怀旧和娱乐价值'
+            },
+            {
+              type: 'term',
+              title: '联名款',
+              tag: '周边收藏',
+              def: '不同品牌或IP合作推出的产品，结合双方元素，具有稀缺性和独特性',
+              usage: '商业跨界合作的常见形式，在潮流和收藏领域尤其流行',
+              example: '满足对独特性和稀缺性的追求，同时表达对多个IP的喜爱，具有社交炫耀价值'
+            },
+            {
+              type: 'term',
+              title: '限量版',
+              tag: '周边收藏',
+              def: '指生产数量有限的商品，通常具有编号或特殊标识，以增加收藏价值',
+              usage: '商业中常见的稀缺营销策略，在收藏品领域广泛应用',
+              example: '满足对稀缺性和独占性的心理需求，增加收藏品的投资价值和炫耀资本'
+            },
+            {
+              type: 'term',
+              title: '设定集',
+              tag: '周边收藏',
+              def: '动漫、游戏或影视作品的官方艺术设定资料集，包含角色设计、场景原画等',
+              usage: '源自创作行业的资料整理，后作为周边商品出售给粉丝',
+              example: '满足对作品幕后创作过程的好奇，加深对作品的理解和情感连接'
+            },
+            {
+              type: 'term',
+              title: '吧唧',
+              tag: '周边收藏',
+              def: '"バッジ"（badge）的音译，指徽章、胸章，是动漫周边中常见的类型',
+              usage: '日语词在中文宅圈的直接使用，是圈内常用术语',
+              example: '以低成本方式收藏和展示对IP的喜爱，便于携带和交换，增强圈内社交'
+            },
+            {
+              type: 'term',
+              title: '立牌',
+              tag: '周边收藏',
+              def: '站立式人物牌，印有动漫角色形象，可放置在桌面展示',
+              usage: '常见的动漫周边形式，制作简单，展示效果好',
+              example: '将喜爱的角色形象实体化，用于装饰个人空间，营造沉浸式爱好环境'
+            },
+            {
+              type: 'term',
+              title: '色纸',
+              tag: '周边收藏',
+              def: '印有动漫角色或声优、作者签名的彩色纸板，具有收藏价值',
+              usage: '源自日本动漫活动中的签名板，后发展为常见周边',
+              example: '获取与创作者或声优的直接连接感，具有较高的情感价值和收藏价值'
+            },
+            {
+              type: 'term',
+              title: '痛车',
+              tag: '周边收藏',
+              def: '将动漫角色图案喷绘或贴膜在汽车上，用于展示爱好',
+              usage: '源自日本汽车改装文化，是"痛文化"的延伸',
+              example: '将私人爱好进行大规模公开展示，表达强烈的身份认同和圈层归属'
+            },
+            {
+              type: 'term',
+              title: '复刻版',
+              tag: '周边收藏',
+              def: '对停产或稀有的经典商品进行重新生产和销售',
+              usage: '商家满足市场需求和粉丝情怀的商业策略',
+              example: '为错过原始发行的粉丝提供获取机会，满足怀旧情感和收藏需求'
+            },
+            {
+              type: 'term',
+              title: '中古品',
+              tag: '周边收藏',
+              def: '指二手商品，在周边收藏中特指有一定年代、已停产的收藏品',
+              usage: '源自日语"中古"（二手），在收藏圈指有收藏价值的二手物品',
+              example: '以合理价格获取稀有藏品，享受"淘货"乐趣，满足对历史版本和稀有品的追求'
+            },
+            {
+              type: 'term',
+              title: '景品',
+              tag: '周边收藏',
+              def: '在日本指娱乐设施（如抓娃娃机）中的奖品，质量通常低于一般商品',
+              usage: '源自日本娱乐产业，是获取周边的低成本方式之一',
+              example: '以游戏方式获取周边，增加获取过程的趣味性和成就感'
+            },
+            {
+              type: 'term',
+              title: '盒蛋',
+              tag: '周边收藏',
+              def: '盒装扭蛋，一盒中包含多个随机款式，通常为一个系列',
+              usage: '扭蛋的变体，以盒装形式销售，仍具有随机性',
+              example: '享受收集系列的乐趣，随机性刺激重复购买，满足收集完整系列的欲望'
+            },
+            {
+              type: 'term',
+              title: '特典',
+              tag: '周边收藏',
+              def: '购买商品时附赠的特别礼品，通常与正品主题相关',
+              usage: '日语"特典"的直接使用，是常见的促销手段',
+              example: '增加购买的价值感和惊喜感，特典本身也成为收藏的一部分'
+            },
+            {
+              type: 'chapter',
+              title: '追星文化',
+              desc: '每条按「现象释义—文化溯源—心理需求」三层解析'
+            },
+            {
+              type: 'term',
+              title: '梦女/梦男',
+              tag: '追星文化',
+              def: '幻想自己与喜欢的角色或明星发生情感关系（多为爱情）的粉丝',
+              usage: '源自日语"夢女子"，在同人创作中常见，现已形成庞大群体',
+              example: '在幻想中构建理想的亲密关系模板，进行自我情感需求的投射与满足'
+            },
+            {
+              type: 'term',
+              title: '嬷嬷',
+              tag: '追星文化',
+              def: '一般指"受腐唯"，即只喜欢某位明星，并只接受他在同人配对中处于弱势方，渴望其被爱护',
+              usage: '饭圈术语精细化、角色化的体现，源自对《还珠格格》中容嬷嬷的戏称',
+              example: '通过"以下犯上"的视角重构偶像形象，获得情感上的掌控感和救赎欲满足'
+            },
+            {
+              type: 'term',
+              title: '泥塑',
+              tag: '追星文化',
+              def: '"逆苏"谐音，指将偶像的性别气质逆转来看待，如称男明星为"老婆"、"女儿"',
+              usage: '对传统性别凝视的反叛，强调审美和情感的多元化',
+              example: '打破性别刻板印象，自由地欣赏和投射情感，是自我意识的一种表达'
+            },
+            {
+              type: 'term',
+              title: '整肃',
+              tag: '追星文化',
+              def: '"正苏"谐音，与泥塑相对，指欣赏并强调偶像本身性别特质（如男性阳刚、女性柔美）的粉丝',
+              usage: '饭圈内部对不同审美取向的分类标签',
+              example: '遵循传统性别审美，从偶像身上获得符合主流期待的投射与认同'
+            },
+            {
+              type: 'term',
+              title: '自担/我担',
+              tag: '追星文化',
+              def: '指"我自己担当（支持）的偶像"，即自己最喜欢的那个明星',
+              usage: '日语"担当"的中文化使用，是粉丝圈基础称谓',
+              example: '清晰界定自己的情感归属，在群体中表明身份'
+            },
+            {
+              type: 'term',
+              title: 'BE美学',
+              tag: '追星文化',
+              def: '"Bad Ending"（悲剧结局）的美学，指欣赏和沉醉于故事或CP（角色配对）的悲剧性收场',
+              usage: '源自文学、影视评论，在粉丝二创中成为一种主动追求的审美趣味',
+              example: '从悲剧性中获得强烈的情感冲击和深刻的美感体验，认为残缺有时比完美更动人'
+            },
+            {
+              type: 'term',
+              title: 'OOC',
+              tag: '追星文化',
+              def: '"Out Of Character"的缩写，指在同人创作中，角色行为严重偏离了原著设定',
+              usage: '同人创作领域的术语，用于评价作品是否贴合角色',
+              example: '维护心中对角色理解的纯洁性和一致性，是圈层内进行创作交流与批评的准则'
+            },
+            {
+              type: 'term',
+              title: '乙游',
+              tag: '追星文化',
+              def: '"乙女游戏"的简称，指以女性为主角、与男性角色发展恋爱关系的游戏',
+              usage: '源自日本的游戏类型，近年来在国内手游市场爆发',
+              example: '在高度定制化的虚拟关系中，获得被关爱、被尊重的沉浸式情感体验'
+            },
+            {
+              type: 'term',
+              title: '塌房',
+              tag: '追星文化',
+              def: '指偶像因丑闻（如恋爱、失德）而人设崩塌，让粉丝失望',
+              usage: '对"偶像如房屋，粉丝是住户"的生动比喻',
+              example: '形象地表达情感投资落空的失望与背叛感'
+            },
+            {
+              type: 'term',
+              title: '营业',
+              tag: '追星文化',
+              def: '指偶像或CP按粉丝期望进行互动、发糖等职业化行为',
+              usage: '将娱乐圈行为类比为商业活动，带有一丝看透本质的冷静',
+              example: '能够理性区分偶像的"工作表现"与真实自我，是粉丝心态成熟化的表现'
+            },
+            {
+              type: 'term',
+              title: '打投',
+              tag: '追星文化',
+              def: '指粉丝为偶像打榜投票，通常需要投入大量时间和金钱',
+              usage: '源自选秀节目粉丝为支持偶像晋级而进行的集体行为',
+              example: '通过实际行动表达对偶像的支持，获得参与感和集体归属感'
+            },
+            {
+              type: 'term',
+              title: '反黑',
+              tag: '追星文化',
+              def: '粉丝自发组织举报对偶像的负面言论或恶意攻击',
+              usage: '饭圈为维护偶像形象而发展出的组织化行为',
+              example: '保护偶像形象不受损害，表达忠诚和支持，维护粉丝群体的共同利益'
+            },
+            {
+              type: 'term',
+              title: '控评',
+              tag: '追星文化',
+              def: '控制评论，指粉丝在社交媒体上有组织地发布正面评论，压制负面声音',
+              usage: '饭圈维护偶像网络形象的重要手段',
+              example: '塑造偶像的正面公共形象，展示粉丝力量，对抗负面舆论'
+            },
+            {
+              type: 'term',
+              title: '站姐',
+              tag: '追星文化',
+              def: '指经营偶像应援站的女性粉丝，通常负责前线拍照、发布独家照片和视频',
+              usage: '源自韩国饭圈文化，随K-pop全球化传播',
+              example: '以专业方式支持偶像，获得接近偶像的特权和在粉丝圈的影响力'
+            },
+            {
+              type: 'term',
+              title: '代拍',
+              tag: '追星文化',
+              def: '代替无法到现场的粉丝拍摄偶像照片或视频，通常收费',
+              usage: '饭圈职业化的产物，满足粉丝对偶像影像资料的需求',
+              example: '以金钱换取偶像影像资源，满足对偶像的视觉需求，弥补无法亲临现场的遗憾'
+            },
+            {
+              type: 'term',
+              title: '圈地自萌',
+              tag: '追星文化',
+              def: '指粉丝在自己的小圈子内分享和创作，不主动向外传播，避免引发争议',
+              usage: '饭圈为减少冲突而发展出的自我约束行为',
+              example: '保护小众爱好不受外界干扰，创造安全的交流空间，维持圈内和谐'
+            },
+            {
+              type: 'term',
+              title: '产出',
+              tag: '追星文化',
+              def: '指粉丝为偶像创作的同人文、图、视频等衍生作品',
+              usage: '粉丝文化的核心内容创作行为',
+              example: '通过创造性表达对偶像的喜爱，获得创作成就感，丰富粉丝文化内容'
+            },
+            {
+              type: 'term',
+              title: '磕CP',
+              tag: '追星文化',
+              def: '"磕"指沉迷、享受，"CP"是Couple的缩写，指喜欢看两个角色或明星的配对互动',
+              usage: '同人文化中的核心活动，历史悠久，形式多样',
+              example: '从他人（即使是虚构）的亲密关系中获得情感满足和快乐，投射自己的情感幻想'
+            },
+            {
+              type: 'term',
+              title: '唯粉',
+              tag: '追星文化',
+              def: '只喜欢一个团体中的某个成员，而非整个团体',
+              usage: '饭圈内部的身份分类，与"团粉"相对',
+              example: '表达对特定个体的专注喜爱，与其他成员粉丝划清界限，避免情感稀释'
+            },
+            {
+              type: 'term',
+              title: '团粉',
+              tag: '追星文化',
+              def: '喜欢整个团体所有成员的粉丝',
+              usage: '与"唯粉"相对，是粉丝身份的另一种选择',
+              example: '欣赏团体整体氛围和成员间的互动，重视集体和谐而非个人突出'
+            },
+            {
+              type: 'term',
+              title: '毒唯',
+              tag: '追星文化',
+              def: '指极端唯粉，不仅只喜欢一个成员，还攻击其他成员或团体',
+              usage: '唯粉中的极端类型，常引发饭圈冲突',
+              example: '通过攻击"竞争对手"来强化对自己偶像的忠诚，但往往引发负面后果'
+            },
+            {
+              type: 'term',
+              title: '爬墙',
+              tag: '追星文化',
+              def: '指粉丝从喜欢一个偶像转向喜欢另一个偶像',
+              usage: '对粉丝变心行为的形象比喻',
+              example: '表达追星兴趣的转移，是多元兴趣和情感变化的自然体现'
+            },
+            {
+              type: 'term',
+              title: '回踩',
+              tag: '追星文化',
+              def: '指曾经喜欢某个偶像的粉丝，在脱粉后发表批评或攻击该偶像的言论',
+              usage: '粉丝与偶像关系破裂后的行为',
+              example: '表达对偶像失望或背叛的愤怒，通过否定过去的选择来维护自我一致性'
+            },
+            {
+              type: 'term',
+              title: '白嫖',
+              tag: '追星文化',
+              def: '指自称粉丝但不为偶像花钱、不做数据的粉丝',
+              usage: '饭圈内部对不付出只享受的粉丝的贬称',
+              example: '以最低成本享受追星乐趣，但可能在圈内受到压力，需平衡投入与收获'
+            },
+            {
+              type: 'term',
+              title: '应援',
+              tag: '追星文化',
+              def: '指粉丝为支持偶像而进行的各种活动，如购买专辑、参加活动、制作应援物等',
+              usage: '源自日韩粉丝文化，现已成全球粉丝常见行为',
+              example: '通过集体行动表达对偶像的支持，获得参与感和集体荣誉感'
+            },
+            {
+              type: 'end',
+              title: '封底',
+              content: '<p>感谢阅读。</p><p style=\'color:#666\'>建议家长与孩子共同维护更新，把“听不懂”变成“聊得来”。</p>'
+            }
+        ];
+
+        // --- 状态管理 ---
+        let currentPage = 1; // 当前显示的右页索引 (1, 3, 5...)
+        const totalPages = bookData.length; // 简化处理，每条数据占一页（正或反）
+        // 实际上为了双页效果，我们需要把数据映射到物理纸张上
+        // 物理纸张数 = Math.ceil(Data.length / 2)
+        
+        const bookContainer = document.getElementById('book-container');
+        const papers = [];
+
+        // --- 初始化渲染 ---
+        function applyMeta() {
+            // 文档标题
+            const t = document.getElementById('doc-title');
+            if (t) t.textContent = BOOK_META.docTitle;
+
+            // 顶部标题
+            const tt = document.getElementById('toolbar-title');
+            if (tt) tt.textContent = BOOK_META.appTitle;
+
+            // 首页信息
+            const tag = document.getElementById('hero-tag');
+            if (tag) tag.textContent = BOOK_META.heroTag;
+
+            const ht = document.getElementById('hero-title');
+            if (ht) ht.innerHTML = BOOK_META.heroTitleHtml;
+
+            const hd = document.getElementById('hero-desc');
+            if (hd) hd.textContent = BOOK_META.heroDesc;
+
+            const hv = document.getElementById('hero-version');
+            if (hv) hv.textContent = BOOK_META.versionText;
+
+            // 统计：可自动计算
+            let stats = BOOK_META.stats || [];
+            if (BOOK_META.autoStats) {
+                const chapterCount = bookData.filter(x => x.type === 'chapter').length;
+                const termCount = bookData.filter(x => x.type === 'term').length;
+                stats = [
+                    { strong: `${chapterCount} 章`, span: '章节' },
+                    { strong: `${termCount}+`, span: '词条' },
+                    ...(stats.slice(2) || [])
+                ];
+            }
+
+            const s1 = document.getElementById('stat-1-strong'); const s1b = document.getElementById('stat-1-span');
+            const s2 = document.getElementById('stat-2-strong'); const s2b = document.getElementById('stat-2-span');
+            const s3 = document.getElementById('stat-3-strong'); const s3b = document.getElementById('stat-3-span');
+
+            if (stats[0] && s1 && s1b) { s1.textContent = stats[0].strong; s1b.textContent = stats[0].span; }
+            if (stats[1] && s2 && s2b) { s2.textContent = stats[1].strong; s2b.textContent = stats[1].span; }
+            if (stats[2] && s3 && s3b) { s3.textContent = stats[2].strong; s3b.textContent = stats[2].span; }
+        }
+
+        function initBook() {
+            bookContainer.innerHTML = '';
+            const totalSheets = Math.ceil(bookData.length / 2);
+            
+            // 生成物理纸张
+            for (let i = 0; i < totalSheets; i++) {
+                const dataLeft = bookData[i * 2];     // 偶数索引是左页（但在上一张纸的背面）或 封面背面
+                const dataRight = bookData[i * 2 + 1]; // 奇数索引是右页（当前纸正面）
+
+                // 注意：Web 3D 书本逻辑通常是：
+                // Sheet 1: Front -> Page 1 (Right), Back -> Page 2 (Left of next spread)
+                // 这里为了简化，我们采用：Sheet i 的 Front 是第 2i+1 页内容，Back 是第 2i+2 页内容
+                // 翻页逻辑：Current Sheet 翻过去，展示 Back，同时露出 Next Sheet 的 Front
+                
+                const zIndex = totalSheets - i;
+                const paper = document.createElement('div');
+                paper.className = 'paper';
+                paper.style.zIndex = zIndex;
+                paper.id = `sheet-${i}`;
+
+                // 正面 (Front) - 对应数据索引 2i+1 (因为第一页通常是右页)
+                // 修正：通常 Book[0] 是封面(Right)，Book[1]是封面背(Left)... 
+                // 让我们重新定义：Book View 初始状态是合上的？还是打开的？
+                // 需求是“打开手册”后进入阅读，建议默认展示 打开状态 (Left: Intro, Right: Chapter 1)
+                // 简单起见，我们把 bookData 仅仅看作一连串内容。
+                // Sheet 0: Front(Index 0), Back(Index 1)
+                
+                const frontContent = renderPageContent(bookData[i * 2] || {type:'empty'});
+                const backContent = renderPageContent(bookData[i * 2 + 1] || {type:'empty'});
+
+                paper.innerHTML = `
+                    <div class="front">
+                        <div class="page-content">${frontContent}</div>
+                        <div class="page-num">${i * 2 + 1}</div>
+                    </div>
+                    <div class="back">
+                        <div class="page-content">${backContent}</div>
+                        <div class="page-num">${i * 2 + 2}</div>
+                    </div>
+                `;
+                
+                // 点击翻页交互
+                paper.addEventListener('click', () => {
+                    // 如果这张纸还没翻过去，就翻过去（Next）
+                    // 如果已经翻过去了，点击就翻回来（Prev）- 这里为了简单，统一由按钮控制，
+                    // 点击纸张区域只做 Next
+                    if(!paper.classList.contains('flipped')) {
+                        turnPage('next');
+                    } else {
+                        turnPage('prev');
+                    }
+                });
+
+                bookContainer.appendChild(paper);
+                papers.push(paper);
+            }
+
+            // 初始化目录
+            const tocList = document.getElementById('toc-list');
+            bookData.forEach((item, index) => {
+                if (['chapter', 'term'].includes(item.type)) {
+                    const div = document.createElement('div');
+                    div.className = 'toc-item';
+                    div.innerText = (item.type === 'chapter' ? '📂 ' : '📄 ') + item.title;
+                    div.onclick = () => jumpToPage(index);
+                    tocList.appendChild(div);
+                }
+            });
+
+            applyMeta();
+            updateStatus();
+        }
+
+        // --- 内容渲染器 ---
+        function renderPageContent(item) {
+            if (item.type === 'empty') return '';
+            if (item.type === 'cover') return `<div style="display:flex;justify-content:center;align-items:center;height:100%;"><h1>${item.title}</h1></div>`;
+            
+            if (item.type === 'chapter') {
+                return `
+                    <div style="text-align:center; padding-top:100px;">
+                        <h1 style="color:var(--primary);font-size:36px;">${item.title}</h1>
+                        <p style="color:#666;margin-top:20px;">${item.desc}</p>
+                        <div style="margin-top:50px;border-top:1px solid #ddd;width:50px;margin-left:auto;margin-right:auto;"></div>
+                    </div>
+                `;
+            }
+
+            if (item.type === 'term') {
+                return `
+                    <span class="term-tag">${item.tag}</span>
+                    <h2 style="font-size:28px; margin-top:10px;">${item.title}</h2>
+                    <p><strong>【现象释义】</strong>${item.def}</p>
+                    <p><strong>【文化溯源】</strong>${item.usage}</p>
+                    <div class="chat-bubble"><strong>【心理需求】</strong>${item.example}</div>
+                    ${item.risk ? `<div class="risk-alert">⚠️ 风险提示：${item.risk}</div>` : ''}
+                `;
+            }
+
+            return `<h2>${item.title}</h2><div>${item.content || ''}</div>`;
+        }
+
+        // --- 核心翻页逻辑 ---
+        let currentSheetIndex = -1; // -1 表示书是合上的（或者都在右边）
+
+        function turnPage(direction) {
+            if (direction === 'next') {
+                if (currentSheetIndex < papers.length - 1) {
+                    currentSheetIndex++;
+                    const paper = papers[currentSheetIndex];
+                    paper.classList.add('flipped');
+                    // z-index 调整：翻过去的纸，顺序要倒过来，保证最后翻的在最上面
+                    paper.style.zIndex = currentSheetIndex + 1; 
+                }
+            } else if (direction === 'prev') {
+                if (currentSheetIndex >= 0) {
+                    const paper = papers[currentSheetIndex];
+                    paper.classList.remove('flipped');
+                    // z-index 恢复：未翻的纸，index越小越在上面（模拟书页堆叠）
+                    setTimeout(() => {
+                        paper.style.zIndex = papers.length - currentSheetIndex;
+                    }, 300); // 延迟等到动画过半
+                    currentSheetIndex--;
+                }
+            }
+            applyMeta();
+            updateStatus();
+        }
+
+        function jumpToPage(dataIndex) {
+            // 计算需要翻多少张纸
+            // dataIndex 0,1 -> Sheet 0
+            // dataIndex 2,3 -> Sheet 1
+            const targetSheet = Math.floor(dataIndex / 2);
+            
+            // 自动翻页动画
+            // 简单实现：瞬间跳转或快速循环
+            // 这里演示瞬间逻辑
+            papers.forEach((p, idx) => {
+                if (idx <= targetSheet) {
+                    p.classList.add('flipped');
+                    p.style.zIndex = idx + 1;
+                } else {
+                    p.classList.remove('flipped');
+                    p.style.zIndex = papers.length - idx;
+                }
+            });
+            currentSheetIndex = targetSheet;
+            updateStatus();
+            closeAllDrawers(); // 关闭目录/搜索
+        }
+
+        function updateStatus() {
+            // 更新进度条和页码
+            // currentSheetIndex 是翻过去的纸张数。
+            // 比如 index=0翻过去，显示的是 Back(Page 2) 和 Sheet 1 的 Front(Page 3)
+            const displayedPage = Math.max(1, (currentSheetIndex + 1) * 2); 
+            const total = bookData.length;
+            const progress = (displayedPage / total) * 100;
+            
+            document.getElementById('progress-fill').style.width = `${Math.min(progress, 100)}%`;
+            document.getElementById('page-num-display').innerText = `${Math.min(displayedPage, total)} / ${total}`;
+            
+            // 更新章节标题
+            const currentData = bookData[Math.min(displayedPage, total - 1)];
+            document.getElementById('chapter-info').innerText = currentData ? currentData.title : '阅读中...';
+
+            saveProgress();
+}
+
+        // --- 视图切换 ---
+function openBook() {
+    const home = document.getElementById('home-view');
+    const reader = document.getElementById('reader-view');
+
+    // 先让阅读器参与布局，否则某些浏览器第一次进阅读器会卡一下
+    reader.style.display = 'flex';
+
+    // 下一帧再激活 opacity 动画，避免强制同步重排
+    requestAnimationFrame(() => {
+        home.classList.add('hidden');
+        reader.classList.add('active');
+    });
+}
+
+function closeBook() {
+    closeAllDrawers();
+    const home = document.getElementById('home-view');
+    const reader = document.getElementById('reader-view');
+
+    // 立刻把阅读器从布局树里拿掉（解决“返回首页卡一下”）
+    reader.classList.remove('active');
+    reader.style.display = 'none';
+
+    // 显示模块首页
+    home.classList.remove('hidden');
+}
+
+
+        // =========================
+// 目录 / 搜索抽屉：统一控制
+// =========================
+const drawerBackdrop = document.getElementById('drawer-backdrop');
+const tocDrawer = document.getElementById('toc-drawer');
+const searchDrawer = document.getElementById('search-drawer');
+
+function openDrawer(which){
+    // 先全关
+    tocDrawer.classList.remove('open');
+    searchDrawer.classList.remove('open');
+
+    if(which === 'toc') tocDrawer.classList.add('open');
+    if(which === 'search') searchDrawer.classList.add('open');
+
+    const anyOpen = tocDrawer.classList.contains('open') || searchDrawer.classList.contains('open');
+    drawerBackdrop.classList.toggle('open', anyOpen);
+
+    // 打开搜索时自动聚焦
+    if(which === 'search'){
+        setTimeout(() => document.getElementById('search-input')?.focus(), 50);
+    }
+}
+function closeAllDrawers(){ openDrawer(null); }
+
+function toggleTOC(){
+    const isOpen = tocDrawer.classList.contains('open');
+    openDrawer(isOpen ? null : 'toc');
+}
+function toggleSearch(){
+    const isOpen = searchDrawer.classList.contains('open');
+    openDrawer(isOpen ? null : 'search');
+    // 打开搜索抽屉时立刻渲染一次结果（解决未输入时/刚打开无反应的感受）
+    if(!isOpen){
+        try{ performSearch(); }catch(e){}
+    }
+}
+
+// =========================
+// 主题：夜间模式（带持久化）
+// =========================
+function applyThemeFromStorage(){
+    const saved = localStorage.getItem('ebook_theme') || 'light';
+    document.body.classList.toggle('dark-mode', saved === 'dark');
+    syncThemeIcon();
+}
+function syncThemeIcon(){
+    const icon = document.getElementById('theme-icon');
+    if(!icon) return;
+    const isDark = document.body.classList.contains('dark-mode');
+    icon.textContent = isDark ? '☀️' : '🌙';
+    icon.title = isDark ? '切换到日间模式' : '切换到夜间模式';
+}
+function toggleMode(){
+    const willDark = !document.body.classList.contains('dark-mode');
+    document.body.classList.toggle('dark-mode', willDark);
+    localStorage.setItem('ebook_theme', willDark ? 'dark' : 'light');
+    syncThemeIcon();
+}
+
+// =========================
+// 阅读进度：继续阅读（localStorage）
+// =========================
+const PROGRESS_KEY = 'ebook_lastSheetIndex';
+
+function saveProgress(){
+    // currentSheetIndex: -1 表示合上/封面状态；不写入进度（避免“空记录”）
+    if(currentSheetIndex < 0) return;
+    localStorage.setItem(PROGRESS_KEY, String(currentSheetIndex));
+    refreshContinueButton();
+}
+
+function getSavedSheet(){
+    const raw = localStorage.getItem(PROGRESS_KEY);
+    const n = raw === null ? null : Number(raw);
+    if(n === null || Number.isNaN(n) || n < 0) return null;
+    // 上限保护
+    return Math.min(n, papers.length - 1);
+}
+
+function refreshContinueButton(){
+    const btn = document.getElementById('continue-btn');
+    if(!btn) return;
+
+    const saved = getSavedSheet();
+    if(saved === null){
+        btn.disabled = true;
+        btn.style.opacity = 0.6;
+        btn.textContent = '↪ 继续阅读';
+        return;
+    }
+    btn.disabled = false;
+    btn.style.opacity = 1;
+    const pageNo = Math.max(1, (saved + 1) * 2);
+    btn.textContent = `↪ 继续阅读（第 ${pageNo} 页）`;
+}
+
+function continueReading(){
+    const saved = getSavedSheet();
+    if(saved === null){
+        alert('你还没有阅读记录。先点“打开手册”开始阅读～');
+        return;
+    }
+    openBookAtSheet(saved);
+}
+
+function openBookAtSheet(sheetIndex){
+    openBook();
+    // 等阅读器视图激活后再跳转（避免某些浏览器动画/渲染时序问题）
+    setTimeout(() => {
+        // 用 jumpToPage(dataIndex) 跳；dataIndex = sheetIndex*2
+        jumpToPage(sheetIndex * 2);
+        saveProgress();
+    }, 50);
+}
+
+// =========================
+// 搜索：词条/释义/溯源/心理需求 全文检索
+// =========================
+function normalize(s){
+    return (s || '').toString().toLowerCase().replace(/\s+/g,'');
+}
+
+function buildSnippet(item, q){
+    const fields = [
+        item.title, item.tag,
+        item.def, item.usage, item.example,
+        item.desc, item.content
+    ].filter(Boolean).join('  ');
+    const plain = fields.replace(/<[^>]+>/g,' ');
+    const idx = plain.toLowerCase().indexOf(q.toLowerCase());
+    if(idx === -1) return plain.slice(0, 60);
+    const start = Math.max(0, idx - 18);
+    const end = Math.min(plain.length, idx + q.length + 30);
+    return (start>0 ? '…' : '') + plain.slice(start, end) + (end<plain.length ? '…' : '');
+}
+
+function performSearch(){
+    const input = document.getElementById('search-input');
+    const qRaw = input?.value || '';
+    const q = normalize(qRaw);
+    const resultsEl = document.getElementById('search-results');
+    const hintEl = document.getElementById('search-hint');
+    if(!resultsEl) return;
+
+    resultsEl.innerHTML = '';
+    if(!q){
+        hintEl.textContent = '提示：支持模糊匹配；回车可定位到第一条结果。';
+        return;
+    }
+
+    const matches = [];
+    bookData.forEach((item, index) => {
+        if(item.type === 'empty') return;
+        const hay = normalize(
+            [item.title, item.tag, item.def, item.usage, item.example, item.desc, item.content].filter(Boolean).join(' ')
+        );
+        if(hay.includes(q)){
+            matches.push({ item, index });
+        }
+    });
+
+    hintEl.textContent = matches.length ? `找到 ${matches.length} 条结果：点击可跳转` : '没有找到结果，换个关键词试试。';
+
+    matches.slice(0, 80).forEach(({item, index}) => {
+        const div = document.createElement('div');
+        div.className = 'search-item';
+
+        const pageNo = Math.max(1, (Math.floor(index/2) + 1) * 2);
+        const typePill = item.type === 'chapter' ? '📂 章节' : (item.type === 'term' ? '📄 词条' : '📄 页面');
+        const tag = item.tag ? `<span class="pill">${item.tag}</span>` : '';
+
+        div.innerHTML = `
+          <div class="si-title">${item.title || '(未命名)'} ${tag}</div>
+          <div class="si-meta"><span class="pill">${typePill}</span> <span class="pill">第 ${pageNo} 页</span></div>
+          <div class="si-snippet">${buildSnippet(item, qRaw)}</div>
+        `;
+        div.onclick = () => {
+            if(!document.getElementById('reader-view').classList.contains('active')){
+                openBookAtSheet(Math.floor(index/2));
+            }else{
+                jumpToPage(index);
+                saveProgress();
+            }
+            closeAllDrawers();
+        };
+        resultsEl.appendChild(div);
+    });
+}
+
+function clearSearch(){
+    const input = document.getElementById('search-input');
+    if(input) input.value = '';
+    performSearch();
+    input?.focus();
+}
+
+// 绑定搜索输入事件 + 快捷键
+function initSearch(){
+    const input = document.getElementById('search-input');
+    if(!input) return;
+
+    input.addEventListener('input', () => performSearch());
+    input.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter'){
+            const first = document.querySelector('#search-results .search-item');
+            first?.click();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape') closeAllDrawers();
+        if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){
+            e.preventDefault();
+            openDrawer('search');
+            try{ performSearch(); }catch(e){}
+        }
+    });
+}
+// --- 启动 ---
+        initBook();
+        applyThemeFromStorage();
+        initSearch();
+        refreshContinueButton();
+
+    </script>
+</body>
+</html>

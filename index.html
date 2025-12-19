@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>心桥解码</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- 配置Tailwind自定义主题 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6366f1', // 主色调-靛蓝色
+            secondary: '#8b5cf6', // 辅助色-紫色
+            dark: '#1e293b',
+            light: '#f8fafc'
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      /* 自定义工具类 */
+      .content-auto {
+        content-visibility: auto;
+      }
+      .bg-gradient-bluepurple {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%);
+      }
+      .text-gradient {
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        background-image: linear-gradient(90deg, #4f46e5, #8b5cf6);
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-5px);
+      }
+    }
+  </style>
+</head>
+
+<body class="font-inter bg-gray-50 text-white overflow-x-hidden">
+  <!-- 导航栏 -->
+  <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 bg-transparent">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center" style="background: transparent;">
+      <a href="#" class="text-2xl font-bold text-black flex items-center">
+        <img src="logo.png" alt="Logo" class="mr-2" style="width: 50px; height: 50px; margin-top: 10px;">
+        <span>心桥解码</span>
+      </a>
+      
+      <!-- 桌面导航 -->
+      <nav class="hidden md:flex items-center space-x-8">
+        <a href="#home" class="text-black hover:text-purple-200 transition-colors">首页</a>
+        <a href="#features" class="text-black hover:text-purple-200 transition-colors">速查手册</a>
+        <a href="#clinic" class="text-black hover:text-purple-200 transition-colors">关系问诊室</a>
+        <a href="#community" class="text-black hover:text-purple-200 transition-colors">共情社区</a>
+
+        <a href="#contact" class="text-black hover:text-purple-200 transition-colors">个人中心</a>
+        <button class="bg-white text-primary px-5 py-2 rounded-full font-medium hover:bg-opacity-90 transition-all shadow-lg">
+          登录
+        </button>
+      </nav>
+      
+           </div>
+    </div>
+  </header>
+
+
+  <!-- 轮播图区域 -->
+  <section class="relative h-[85vh] min-h-[400px] overflow-hidden">
+    <div id="carousel" class="w-full h-full relative">
+      
+      <!-- 轮播图1 -->
+      <div class="carousel-item absolute inset-0 opacity-100 transition-opacity duration-1000">
+        <img src="img/1.jpg" 
+             alt="亲子互动" class="w-full h-full object-cover">
+        <div class="absolute inset-0 flex items-center text-center">
+          <div class="container mx-auto px-6 md:px-12 max-w-4xl">
+            <h1 class="text-3xl md:text-5xl font-bold text-black mb-4 text-shadow">搭建亲子沟通桥梁</h1>
+            <p class="text-lg md:text-xl text-black/90 mb-6 max-w-xl mx-auto">理解从这里开始，用爱与沟通构建和谐亲子关系</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 轮播图2 -->
+      <div class="carousel-item absolute inset-0 opacity-0 transition-opacity duration-1000 ease-in-out">
+        <img src="img/2.jpg" alt="城市风光" class="w-full h-full object-cover">
+        <div class="absolute inset-0 flex items-center text-center">
+          <div class="container mx-auto px-6 md:px-12 max-w-4xl">
+            <h1 class="text-3xl md:text-5xl font-bold text-black mb-4 text-shadow">搭建亲子沟通桥梁</h1>
+            <p class="text-lg md:text-xl text-black/90 mb-6 max-w-xl mx-auto">理解从这里开始，用爱与沟通构建和谐亲子关系</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 轮播图3 -->
+      <div class="carousel-item absolute inset-0 opacity-0 transition-opacity duration-1000 ease-in-out">
+        <img src="img/3.jpg" alt="科技感图片" class="w-full h-full object-cover">
+         <div class="absolute inset-0 flex items-center text-center">
+          <div class="container mx-auto px-6 md:px-12 max-w-4xl">
+            <h1 class="text-3xl md:text-5xl font-bold text-black mb-4 text-shadow">搭建亲子沟通桥梁</h1>
+            <p class="text-lg md:text-xl text-black/90 mb-6 max-w-xl mx-auto">理解从这里开始，用爱与沟通构建和谐亲子关系</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 轮播控制按钮 -->
+      <button id="prev-slide" class="absolute left-4 top-1/2 -translate-y-1/2 z-30 text-black text-4xl hover:text-purple-200 transition-colors">
+        <i class="fa fa-angle-left"></i>
+      </button>
+      <button id="next-slide" class="absolute right-4 top-1/2 -translate-y-1/2 z-30 text-black text-4xl hover:text-purple-200 transition-colors">
+        <i class="fa fa-angle-right"></i>
+      </button>
+      
+      <!-- 轮播指示器 -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex space-x-3">
+        <button class="carousel-indicator w-3 h-3 rounded-full bg-black opacity-100"></button>
+        <button class="carousel-indicator w-3 h-3 rounded-full bg-black opacity-50"></button>
+        <button class="carousel-indicator w-3 h-3 rounded-full bg-black opacity-50"></button>
+      </div>
+    </div>
+    
+    <!-- 向下滚动指示 -->
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 text-black animate-bounce">
+    <a href="#features" class="flex flex-col items-center">
+      <span class="text-sm mb-2">向下滚动</span>
+      <i class="fa fa-chevron-down"></i>
+    </a>
+  </div>
+  </section>
+
+  <!-- 核心业务板块（全新设计） -->
+  <section id="features" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mb-4 text-gradient">核心业务板块</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto text-lg">三大创新业务模块，构建家庭沟通与教育服务生态</p>
+      </div>
+
+      <!-- 00后亚文化语言速查手册 -->
+      <div class="bg-gradient-to-r from-purple-50 to-purple-100 rounded-2xl p-6 md:p-10 shadow-lg mb-12 card-hover">
+        <div class="flex flex-col md:flex-row items-center gap-8">
+          <div class="md:w-1/3">
+            <div class="bg-white p-6 rounded-xl shadow-md">
+
+              <div class="flex items-center gap-3 mb-4">
+                <i class="fa fa-cube text-5xl text-secondary"></i>
+                <span class="text-2xl font-medium">代际理解亚文化翻译宝典</span>
+              </div>
+              <img src="img/shouce.jpg" alt="00后亚文化语言速查手册" class="w-full h-auto rounded-lg">
+            </div>
+          </div>
+          <div class="md:w-2/3">
+            <h3 class="text-2xl font-bold mb-4 text-secondary">00后亚文化语言速查手册</h3>
+            <p class="text-xl text-gray-700 mb-6 leading-relaxed">
+              一款动态更新的代际沟通实用工具，专为破解家长对青少年亚文化的认知壁垒打造。手册聚焦四大核心板块 —— 网络热梗、趣味表情包、ACGN 圈 “谷子” 类型、多元追星文化，精选 100 + 高频词汇，以 “现象释义
+              - 文化溯源 - 心理需求” 三层解析法深度拆解。先明确词汇本义与使用场景，再追溯其诞生背景与传播逻辑，最终挖掘青少年使用背后的核心诉求：或是寻求同辈认同，或是释放成长压力，或是表达自我主张。它打破 “亚文化 =
+              叛逆” 的刻板印象，帮助家长跳出表象批判，穿透行为看本质，读懂青少年的精神世界，实现从困惑疏离到理解共情的认知转变，为顺畅的代际沟通搭建桥梁。
+            </p>
+            <button
+              class="bg-secondary hover:bg-secondary/90 text-white px-6 py-3 rounded-full font-semibold transition-all shadow-md">
+              了解详情 <i class="fa fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 关系问诊室 -->
+      <div id="clinic" class="bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-6 md:p-10 shadow-lg mb-12 card-hover">
+        <div class="flex flex-col md:flex-row-reverse items-center gap-8">
+          <div class="md:w-1/3">
+            <div class="bg-white p-6 rounded-xl shadow-md">
+              <div class="flex items-center gap-3 mb-4">
+                <i class="fa fa-book text-5xl text-green-400"></i>
+                <span class="text-2xl font-medium">亲子沟通数字化赋能系统</span>
+              </div>
+              <img src="img/goutong.jpg" alt="关系问诊室" class="w-full h-auto rounded-lg">
+            </div>
+          </div>
+          <div class="md:w-2/3">
+            <h3 class="text-2xl font-bold mb-4 text-green-400">关系问诊室</h3>
+            <p class="text-xl text-gray-700 mb-6 leading-relaxed">
+              基于非暴力沟通理论打造的亲子沟通实战训练平台，专为解决家庭高频冲突设计。系统精选 20 个青少年成长典型场景 ——
+              涵盖学习规划分歧、手机使用管控、社交边界争议、兴趣选择冲突等，通过数字化模拟对话还原真实沟通困境。
+              平台提供阶梯式递进沟通方案，从情绪安抚打破对立僵局，到深度探寻双方核心诉求，再到共创可落地的解决方案，每一步都配套具体话术与行动指引。父母可在零压力的安全环境中反复演练，熟悉沟通逻辑、打磨表达技巧，逐步提升应对复杂亲子情境的临场能力，从
+              “被动争吵” 转向 “主动化解”，以科学沟通搭建亲子信任桥梁。
+            </p>
+            <button
+              class="bg-green-500 hover:bg-accent/90 text-white px-6 py-3 rounded-full font-semibold transition-all shadow-md">
+              开始查询 <i class="fa fa-search ml-2"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 共情社区  -->
+      <div id="community" class="bg-gradient-to-r from-orange-50 to-orange-100 rounded-2xl p-6 md:p-10 shadow-lg card-hover">
+
+        <div class="flex flex-col md:flex-row items-center gap-8">
+          <div class="md:w-1/3">
+            <div class="bg-white p-6 rounded-xl shadow-md">
+
+              <div class="flex items-center gap-3 mb-4">
+                <i class="fa fa-users text-5xl text-orange-400"></i>
+                <span class="text-2xl font-medium">亲子双向情感共鸣平台</span>
+              </div>
+              <img src="img/shequ.jpg" alt="共情社区" class="w-full h-auto rounded-lg">
+            </div>
+          </div>
+          <div class="md:w-2/3">
+            <h3 class="text-2xl font-bold mb-4 text-orange-400">共情社区</h3>
+            <p class="text-xl text-gray-700 mb-6 leading-relaxed">
+              聚焦代际情感联结的双向支持空间，专为打破亲子沟通壁垒、缓解双方孤独感打造。平台核心设立两大特色板块：“家长树洞” 匿名倾诉区，让父母可毫无顾虑地分享育儿困惑、焦虑情绪与沟通难题；“青年心声”
+              书信体专栏，鼓励青少年以真诚文字袒露成长烦恼、自我主张与情感需求。
+              通过真实案例展示、同辈经验交流与跨代互动留言，让家长看见青少年行为背后的真实诉求，也让青少年理解父母的关爱与担忧。平台以情感共鸣为纽带，弱化对立感、强化同理心，推动亲子双方从 “互不理解” 走向 “主动倾听”，从
+              “沉默对抗” 变为 “真诚对话”，构建温暖包容的家庭情感生态。
+            </p>
+            <button
+              class="bg-orange-500 hover:bg-warm/90 text-white px-6 py-3 rounded-full font-semibold transition-all shadow-md">
+              加入合作 <i class="fa fa-handshake-o ml-2"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+   <!-- 关于我们 -->
+   <section id="about" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col lg:flex-row items-center gap-12">
+        <div class="lg:w-1/2">
+          <img src="img/关于我们.jpg" alt="关于我们" class="rounded-2xl shadow-xl w-full h-auto">
+        </div>
+        <div class="lg:w-1/2">
+          <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mb-6 text-gradient">关于我们</h2>
+          <p class="text-gray-600 mb-4 text-lg">
+            “心桥解码” 聚焦亚文化下亲子沟通痛点，打造一站式线上服务平台。核心涵盖亚文化速查手册、关系问诊室、共情社区三大模块，以专业解析与实用工具为支撑，精准对接亲子双方需求。
+          </p>
+          <p class="text-gray-600 mb-6 text-lg">
+            平台通过亚文化知识科普、沟通场景训练、双向情感倾诉等服务，助力家长读懂青年语言与深层诉求，缓解代际隔阂，为构建破圈共情、和谐融洽的亲子关系开辟新路径。
+
+          </p>
+          
+          <div class="grid grid-cols-2 gap-6 mb-8">
+            <div>
+              <h3 class="text-3xl font-bold text-primary mb-2">500+</h3>
+              <p class="text-gray-600">收益家庭</p>
+            </div>
+            <div>
+              <h3 class="text-3xl font-bold text-primary mb-2">100+</h3>
+              <p class="text-gray-600">专业团队</p>
+            </div>
+            <div>
+              <h3 class="text-3xl font-bold text-primary mb-2">15+</h3>
+              <p class="text-gray-600">行业经验</p>
+            </div>
+            <div>
+              <h3 class="text-3xl font-bold text-primary mb-2">30+</h3>
+              <p class="text-gray-600">合作机构</p>
+            </div>
+          </div>
+          
+          <button class="bg-gradient-bluepurple text-white px-8 py-3 rounded-full font-semibold hover:shadow-xl transition-all transform hover:-translate-y-1">
+            了解更多
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 联系我们 -->
+  <section id="contact" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mb-4 text-gradient">联系我们</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto text-lg">有任何问题或需求，请随时与我们联系，我们将尽快回复您</p>
+      </div>
+
+      <div class="flex flex-col lg:flex-row gap-12">
+        <div class="lg:w-1/2">
+          <form class="bg-gray-50 p-8 rounded-2xl shadow-lg">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label for="name" class="block text-gray-700 mb-2">姓名</label>
+                <input type="text" id="name"
+                  class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  placeholder="请输入您的姓名">
+              </div>
+              <div>
+                <label for="email" class="block text-gray-700 mb-2">邮箱</label>
+                <input type="email" id="email"
+                  class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  placeholder="请输入您的邮箱">
+              </div>
+            </div>
+
+            <div class="mb-6">
+              <label for="subject" class="block text-gray-700 mb-2">主题</label>
+              <input type="text" id="subject"
+                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                placeholder="请输入主题">
+            </div>
+
+            <div class="mb-6">
+              <label for="message" class="block text-gray-700 mb-2">留言</label>
+              <textarea id="message" rows="5"
+                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+                placeholder="请输入您的留言内容"></textarea>
+            </div>
+
+            <button type="submit"
+              class="bg-gradient-bluepurple text-white px-8 py-3 rounded-full font-semibold hover:shadow-xl transition-all transform hover:-translate-y-1 w-full md:w-auto">
+              发送留言
+            </button>
+          </form>
+        </div>
+
+        <div class="lg:w-1/2">
+          <div class="h-full bg-gradient-bluepurple rounded-2xl p-8 shadow-lg text-white flex flex-col justify-between">
+            <div>
+              <h3 class="text-2xl font-bold mb-6">联系方式</h3>
+
+              <div class="space-y-6 mb-8">
+                <div class="flex items-start">
+                  <div
+                    class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white mr-4 mt-1">
+                    <i class="fa fa-map-marker"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-lg mb-1">办公地址</h4>
+                    <p class="text-white opacity-80">广东第二师范学院</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div
+                    class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white mr-4 mt-1">
+                    <i class="fa fa-phone"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-lg mb-1">联系电话</h4>
+                    <p class="text-white opacity-80">+86 13138434905</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div
+                    class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white mr-4 mt-1">
+                    <i class="fa fa-envelope"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-lg mb-1">电子邮箱</h4>
+                    <p class="text-white opacity-80">contact@xinqiaojiema.com</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div
+                    class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white mr-4 mt-1">
+                    <i class="fa fa-clock-o"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-lg mb-1">工作时间</h4>
+                    <p class="text-white opacity-80">周一至周日: 9:00 - 20:00</p>
+                  </div>
+                </div>
+              </div>
+
+              <h3 class="text-2xl font-bold mb-4">关注我们</h3>
+              <div class="flex space-x-4">
+                <a href="#"
+                  class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white hover:bg-white hover:bg-opacity-30 transition-all">
+                  <i class="fa fa-weixin"></i>
+                </a>
+                <a href="#"
+                  class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white hover:bg-white hover:bg-opacity-30 transition-all">
+                  <i class="fa fa-weibo"></i>
+                </a>
+                <a href="#"
+                  class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white hover:bg-white hover:bg-opacity-30 transition-all">
+                  <i class="fa fa-linkedin"></i>
+                </a>
+                <a href="#"
+                  class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white hover:bg-white hover:bg-opacity-30 transition-all">
+                  <i class="fa fa-instagram"></i>
+                </a>
+              </div>
+            </div>
+
+            <div class="mt-12 pt-8 border-t border-white border-opacity-20">
+              <p class="text-white opacity-80">
+                无论您有任何问题或需求，我们的团队都将竭诚为您服务。期待与您一起构建更和谐的家庭关系！
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="bg-dark text-white pt-16 pb-8">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div>
+          <a href="#" class="text-2xl font-bold flex items-center mb-6">
+            <i class="fa fa-heart mr-2"></i>
+            <span>心桥解码</span>
+          </a>
+          <p class="text-gray-400 mb-6">
+            专注于代际沟通解决方案，用创新方式搭建亲子理解桥梁，让家庭关系更和谐。
+          </p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+              <i class="fa fa-weixin text-xl"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+              <i class="fa fa-weibo text-xl"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+              <i class="fa fa-linkedin text-xl"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+              <i class="fa fa-instagram text-xl"></i>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-semibold mb-6">快速链接</h3>
+          <ul class="space-y-3">
+            <li><a href="#home" class="text-gray-400 hover:text-white transition-colors">首页</a></li>
+            <li><a href="#features" class="text-gray-400 hover:text-white transition-colors">核心业务</a></li>
+            <li><a href="#about" class="text-gray-400 hover:text-white transition-colors">关于我们</a></li>
+            <li><a href="#contact" class="text-gray-400 hover:text-white transition-colors">联系我们</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">服务介绍</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">成功案例</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-semibold mb-6">服务项目</h3>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">亲子沟通咨询</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">家庭互动工作坊</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">代际语言手册</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">社区公益活动</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">家长培训课程</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">机构合作方案</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-semibold mb-6">订阅资讯</h3>
+          <p class="text-gray-400 mb-4">
+            订阅我们的新闻资讯，获取最新亲子沟通技巧和活动信息
+          </p>
+          <form class="flex">
+            <input type="email" placeholder="您的邮箱地址"
+              class="px-4 py-2 rounded-l-lg w-full focus:outline-none text-gray-800">
+            <button type="submit"
+              class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-r-lg transition-colors">
+              <i class="fa fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-800 pt-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-400 mb-4 md:mb-0">
+            &copy; 2025 心桥解码. 保留所有权利.
+          </p>
+          <div class="flex space-x-6">
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">隐私政策</a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">服务条款</a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">Cookie政策</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 返回顶部按钮 -->
+  <button id="back-to-top"
+    class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300 z-50 hover:bg-secondary">
+    <i class="fa fa-chevron-up"></i>
+  </button>
+
+  <!-- JavaScript -->
+  <script>
+    // 轮播图功能
+    document.addEventListener('DOMContentLoaded', function () {
+      const carouselItems = document.querySelectorAll('.carousel-item');
+      const indicators = document.querySelectorAll('.carousel-indicator');
+      const prevBtn = document.getElementById('prev-slide');
+      const nextBtn = document.getElementById('next-slide');
+      let currentSlide = 0;
+      let slideInterval;
+
+      // 初始化轮播
+      function startSlideInterval() {
+        slideInterval = setInterval(nextSlide, 5000);
+      }
+
+      // 显示指定幻灯片
+      function showSlide(index) {
+        // 隐藏所有幻灯片
+        carouselItems.forEach(item => {
+          item.classList.remove('opacity-100');
+          item.classList.add('opacity-0');
+        });
+
+        // 重置所有指示器
+        indicators.forEach(indicator => {
+          indicator.classList.remove('opacity-100');
+          indicator.classList.add('opacity-50');
+        });
+
+        // 显示当前幻灯片和激活指示器
+        carouselItems[index].classList.remove('opacity-0');
+        carouselItems[index].classList.add('opacity-100');
+        indicators[index].classList.remove('opacity-50');
+        indicators[index].classList.add('opacity-100');
+
+        currentSlide = index;
+      }
+
+      // 下一张幻灯片
+      function nextSlide() {
+        let newIndex = (currentSlide + 1) % carouselItems.length;
+        showSlide(newIndex);
+      }
+
+      // 上一张幻灯片
+      function prevSlide() {
+        let newIndex = (currentSlide - 1 + carouselItems.length) % carouselItems.length;
+        showSlide(newIndex);
+      }
+
+      // 事件监听
+      prevBtn.addEventListener('click', function () {
+        clearInterval(slideInterval);
+        prevSlide();
+        startSlideInterval();
+      });
+
+      nextBtn.addEventListener('click', function () {
+        clearInterval(slideInterval);
+        nextSlide();
+        startSlideInterval();
+      });
+
+      // 点击指示器切换幻灯片
+      indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', function () {
+          clearInterval(slideInterval);
+          showSlide(index);
+          startSlideInterval();
+        });
+      });
+
+      // 开始轮播
+      startSlideInterval();
+
+      // 导航栏滚动效果
+      const navbar = document.getElementById('navbar');
+      window.addEventListener('scroll', function () {
+        if (window.scrollY > 50) {
+          navbar.classList.add('bg-dark', 'bg-opacity-95', 'shadow-lg');
+          navbar.classList.remove('bg-transparent');
+        } else {
+          navbar.classList.remove('bg-dark', 'bg-opacity-95', 'shadow-lg');
+          navbar.classList.add('bg-transparent');
+        }
+      });
+
+      // 移动端菜单
+      const menuToggle = document.getElementById('menu-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      let menuOpen = false;
+
+      menuToggle?.addEventListener('click', function () {
+        if (menuOpen) {
+          mobileMenu.classList.add('-translate-y-full', 'opacity-0', 'invisible');
+          menuToggle.innerHTML = '<i class="fa fa-bars"></i>';
+        } else {
+          mobileMenu.classList.remove('-translate-y-full', 'opacity-0', 'invisible');
+          mobileMenu.classList.add('translate-y-0', 'opacity-100', 'visible');
+          menuToggle.innerHTML = '<i class="fa fa-times"></i>';
+        }
+        menuOpen = !menuOpen;
+      });
+
+      // 平滑滚动
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+
+          // 关闭移动菜单（如果打开）
+         if (menuOpen && mobileMenu && menuToggle) {
+  mobileMenu.classList.add('-translate-y-full', 'opacity-0', 'invisible');
+  menuToggle.innerHTML = '<i class="fa fa-bars"></i>';
+  menuOpen = false;
+}
+
+          const targetId = this.getAttribute('href');
+          const targetElement = document.querySelector(targetId);
+
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 80,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+
+      // 返回顶部按钮
+      const backToTopBtn = document.getElementById('back-to-top');
+
+      window.addEventListener('scroll', function () {
+        if (window.scrollY > 500) {
+          backToTopBtn.classList.remove('opacity-0', 'invisible');
+          backToTopBtn.classList.add('opacity-100', 'visible');
+        } else {
+          backToTopBtn.classList.add('opacity-0', 'invisible');
+          backToTopBtn.classList.remove('opacity-100', 'visible');
+        }
+      });
+
+      backToTopBtn.addEventListener('click', function () {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+// ====== 【新增】三个核心业务按钮 -> 跳转到三个板块页面 ======
+const PAGE_ROUTES = {
+  handbook: 'ebook.html',   // 速查手册页：改成你的文件名
+  clinic: 'clinic.html',       // 关系问诊室页：改成你的文件名
+  community: 'community.html', // 共情社区页：改成你的文件名
+};
+
+function bindBtnByText(containerSelector, btnText, toUrl) {
+  const container = document.querySelector(containerSelector);
+  if (!container) return;
+
+  const buttons = Array.from(container.querySelectorAll('button'));
+  const targetBtn = buttons.find(b =>
+    (b.innerText || '').replace(/\s+/g, '').includes(btnText)
+  );
+
+  if (!targetBtn) {
+    console.warn('未找到按钮：', btnText);
+    return;
+  }
+
+  targetBtn.addEventListener('click', () => {
+    window.location.href = toUrl;
+  });
+}
+
+bindBtnByText('#features', '了解详情', PAGE_ROUTES.handbook);
+bindBtnByText('#features', '开始查询', PAGE_ROUTES.clinic);
+bindBtnByText('#features', '加入合作', PAGE_ROUTES.community);
+// ====== 【新增】结束 ======
+
+    });
+  </script>
+</body>
+
+</html>
